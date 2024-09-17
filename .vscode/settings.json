@@ -3,7 +3,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.sortMembers": "explicit",
-    "source.organizeImports": "explicit"
+    "source.organizeImports": false
   },
   "typescript.tsdk": "./node_modules/typescript/lib",
   "files.exclude": {
@@ -28,16 +28,7 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "conventionalCommits.scopes": [
-    "package",
-    "assets",
-    "comp",
-    "ios",
-    "android",
-    "sumlog",
-    "bookmark",
-    "storybook"
-  ],
+  "conventionalCommits.scopes": ["package", "assets", "comp"],
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "prettier.configPath": ".prettierrc.js",
