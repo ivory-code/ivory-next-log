@@ -24,7 +24,7 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
-  @apply bg-retroCream font-sans text-darkGray; /* 전체 배경색과 텍스트 스타일 */
+  @apply bg-retroCream font-sans text-darkGray;
 }
 
 h1,
@@ -35,7 +35,6 @@ h3 {
 
 a {
   text-decoration: none;
-  @apply text-blue-500 underline;
 }
 
 button {
@@ -69,4 +68,12 @@ button {
 
 .label {
   @apply bg-pastelPink px-4 py-2 rounded-l-lg border-2 border-black shadow-retro;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
