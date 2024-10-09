@@ -1,6 +1,7 @@
 import {twMerge} from 'tailwind-merge'
 
 import Button from '@/components/Button'
+import CommentInput from '@/components/CommentInput'
 import Profile from '@/components/Profile'
 import CommentBox from '@/components/RightCommentBar/CommentBox'
 
@@ -78,6 +79,9 @@ const RightCommentBar = ({className}: Props) => {
         {MOCK_DATA.map((data, index) => {
           return <CommentBox key={index} item={data} />
         })}
+      </div>
+      <div className="absolute left-0 right-0 bottom-0 p-6">
+        <CommentInput />
       </div>
     </div>
   )
