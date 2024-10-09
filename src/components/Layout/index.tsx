@@ -5,9 +5,10 @@ import RightCommentBar from '@/components/RightCommentBar'
 
 interface Props {
   children: React.ReactNode
+  isMainPage?: boolean
 }
 
-const Layout = ({children}: Props) => {
+const Layout = ({children, isMainPage = false}: Props) => {
   const [isSideBarVisible, setIsSideBarVisible] = useState(false)
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(true)
 
@@ -40,17 +41,18 @@ const Layout = ({children}: Props) => {
         <LeftSideBar isLeftSideBarVisible={isSideBarVisible} />
         <div className="flex py-6 md:py-0 h-screen">
           <div
-            className={`relative flex grow max-w-full bg-n-1 rounded-[1.25rem] ${!isRightSideBarVisible ? 'pr-0' : 'pr-[22.5rem] 2xl:pr-80 lg:pr-0'}`}>
+            className={`relative flex grow max-w-full bg-n-1 rounded-[1.25rem] ${isMainPage || !isRightSideBarVisible ? 'pr-0' : 'pr-[22.5rem] 2xl:pr-80 lg:pr-0'}`}>
             <div className="relative z-2 grow p-10 space-y-10 overflow-y-auto scroll-smooth scrollbar-none 2xl:p-6 md:p-5">
               <div className="relative flex flex-col grow max-w-full md:pt-18">
                 {children}
               </div>
             </div>
-            {isRightSideBarVisible && (
-              <RightCommentBar
-                className={`${!isSideBarVisible && 'md:translate-x-64 md:before:absolute md:before:z-30 md:before:inset-0'}`}
-              />
-            )}
+            {isMainPage ||
+              (isRightSideBarVisible && (
+                <RightCommentBar
+                  className={`${!isSideBarVisible && 'md:translate-x-64 md:before:absolute md:before:z-30 md:before:inset-0'}`}
+                />
+              ))}
           </div>
         </div>
       </div>

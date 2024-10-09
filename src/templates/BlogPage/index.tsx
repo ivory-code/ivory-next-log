@@ -9,7 +9,8 @@ const BlogPage = () => {
   return (
     <>
       <Layout>
-        <BlogCard />
+        <BlogCard url="/" />
+        <BlogCard url="/" />
       </Layout>
     </>
   )

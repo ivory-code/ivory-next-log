@@ -12,6 +12,7 @@ const Image = ({className, ...props}: ImageProps) => {
         loaded && 'opacity-100'
       } ${className}`}
       onLoad={() => setLoaded(true)}
+      sizes="500px"
       {...props}
     />
   )

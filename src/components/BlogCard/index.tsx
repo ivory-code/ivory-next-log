@@ -21,6 +21,7 @@ const BlogCard = ({url}: Props) => {
             src="/images/ogu.webp"
             fill
             alt="blogContent"
+            priority
           />
         </div>
         <div className="mt-4 base1">블로그 제목입니다.</div>

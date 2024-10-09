@@ -7,6 +7,7 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/templates/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -26,6 +27,8 @@ const config: Config = {
         lightGray: '#ededed',
         retroCream: '#faf9f6',
         background: '#141718',
+        black: '#000000',
+        white: '#ffffff',
         primary: {
           1: '#0084FF',
           2: '#3FDD78',
@@ -36,6 +39,12 @@ const config: Config = {
           3: '#8E55EA',
           4: '#8C6584',
           5: '#DDA73F',
+          6: '#F7DF1E',
+          7: '#61DAFB',
+          8: '#E10098',
+          9: '#E37400',
+          10: '#DD2C00',
+          11: '#F24E1E',
         },
         n: {
           1: '#FEFEFE',
@@ -117,6 +126,33 @@ const config: Config = {
         },
       })
       addComponents({
+        '.h1': {
+          '@apply font-sans text-6xl font-bold -tracking-[.025em]': {},
+        },
+        '.h2': {
+          '@apply font-sans text-5xl font-bold -tracking-[.025em]': {},
+        },
+        '.h3': {
+          '@apply font-sans text-4xl font-bold -tracking-[.045em]': {},
+        },
+        '.h4': {
+          '@apply font-sans text-3xl font-bold -tracking-[.02em]': {},
+        },
+        '.h5': {
+          '@apply font-sans text-2xl font-semibold -tracking-[.03em]': {},
+        },
+        '.h6': {
+          '@apply font-sans text-xl font-semibold -tracking-[.03em]': {},
+        },
+        '.body1': {
+          '@apply text-[1.5rem] leading-9 -tracking-[.03em]': {},
+        },
+        '.body1S': {
+          '@apply text-[1.375rem] leading-7 -tracking-[.02em]': {},
+        },
+        '.body2': {
+          '@apply text-[1.0625rem] leading-6 -tracking-[.01em]': {},
+        },
         '.base1': {
           '@apply font-sans text-[1rem] leading-6 font-medium -tracking-[.03em]':
             {},

@@ -1,9 +1,14 @@
 import Link from 'next/link'
 
 import Image from '@/components/Image'
+import Typography from '@/components/Typography'
 
-const MainTitle = () => (
-  <Link className="flex w-[11.88rem] text-n-3 font-extrabold text-2xl" href="/">
+interface Props {
+  title: string
+}
+
+const MainTitle = ({title}: Props) => (
+  <Link className="flex text-n-3 font-extrabold text-2xl" href="/">
     <div className="mb-6">
       <div className="flex items-center justify-center">
         <div className="relative w-10 h-10">
@@ -14,7 +19,7 @@ const MainTitle = () => (
             alt="mainTitle"
           />
         </div>
-        <div>khs-log</div>
+        <Typography text={title} />
       </div>
     </div>
   </Link>

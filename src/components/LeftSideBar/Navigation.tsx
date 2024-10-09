@@ -4,12 +4,12 @@ import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {twMerge} from 'tailwind-merge'
 
-import Icon from '@/components/Icon'
+import Icon, {type IconName} from '@/components/Icon'
 
 type NavigationType = {
   title: string
   url: string
-  icon: string
+  icon: IconName
   iconClass: string
   onClick?: () => void
 }

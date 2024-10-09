@@ -43,7 +43,7 @@ const LeftSideBar = ({isLeftSideBarVisible}: Props) => {
         className={`absolute top-0 right-0 left-0 flex items-center h-30 pl-7 pr-6 ${
           isLeftSideBarVisible ? 'justify-center md:px-4' : 'justify-between'
         }`}>
-        {!isLeftSideBarVisible && <MainTitle />}
+        {!isLeftSideBarVisible && <MainTitle title="khs-log" />}
       </div>
       <div className="grow overflow-y-auto scroll-smooth scrollbar-none">
         <Navigation
