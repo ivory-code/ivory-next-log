@@ -38,15 +38,15 @@ a {
 }
 
 button {
-  @apply bg-pastelBlue text-darkGray shadow-retro rounded px-4 py-2 hover:bg-blue-300;
+  @apply bg-pastelBlue text-darkGray rounded px-4 py-2 hover:bg-blue-300;
 }
 
 .blog-card {
-  @apply bg-pastelYellow p-4 rounded-lg shadow-retro;
+  @apply bg-pastelYellow p-4 rounded-lg;
 }
 
 .nav-bar {
-  @apply bg-retroCream p-4 rounded-full shadow-retro;
+  @apply bg-retroCream p-4 rounded-full;
 }
 
 .nav-item {
@@ -59,7 +59,7 @@ button {
 }
 
 .header-bar {
-  @apply bg-retroCream border-2 border-black rounded-t-lg shadow-retro;
+  @apply bg-retroCream border-2 border-black rounded-t-lg;
 }
 
 .title {
@@ -67,7 +67,7 @@ button {
 }
 
 .label {
-  @apply bg-pastelPink px-4 py-2 rounded-l-lg border-2 border-black shadow-retro;
+  @apply bg-pastelPink px-4 py-2 rounded-l-lg border-2 border-black;
 }
 
 .scrollbar-none::-webkit-scrollbar {
