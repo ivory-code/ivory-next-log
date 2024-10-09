@@ -1,6 +1,7 @@
 import {useState} from 'react'
 
 import Icon from '@/components/Icon'
+import Input from '@/components/Input'
 
 const CommentInput = () => {
   const [commentValue, setCommentValue] = useState('')
@@ -13,13 +14,10 @@ const CommentInput = () => {
           iconName="search"
         />
       </div>
-      <input
-        className="w-full h-11 pl-11 pr-4 bg-transparent shadow-[inset_0_0_0_0.0625rem_#DADBDC] rounded-full outline-none caption1 text-n-5 transition-shadow focus:shadow-[inset_0_0_0_0.125rem_#0084FF] placeholder:text-n-4"
-        type="text"
-        name="search"
-        placeholder="댓글을 입력해주세요."
+      <Input
         value={commentValue}
         onChange={e => setCommentValue(e.target.value)}
+        placeholder="댓글을 입력해주세요."
       />
     </div>
   )

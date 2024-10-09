@@ -45,7 +45,7 @@ const IconRow = ({icons, title}: {icons: IconProps[]; title: string}) => (
 const MainPage = () => {
   return (
     <>
-      <Layout isMainPage>
+      <Layout isMainView>
         <Typography
           text="안녕하세요!! 반갑습니다! 👋🏻"
           className="mb-4 h2 md:pr-16 md:h3 font-black text-n-7"

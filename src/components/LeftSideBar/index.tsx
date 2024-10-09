@@ -30,6 +30,12 @@ const LeftSideBar = ({isLeftSideBarVisible}: Props) => {
       icon: 'favorite',
       iconClass: 'fill-accent-5',
     },
+    {
+      title: '글 작성하기',
+      url: '/BlogCreate',
+      icon: 'create',
+      iconClass: 'fill-primary-2',
+    },
   ]
 
   return (
