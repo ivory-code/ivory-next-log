@@ -1,5 +1,6 @@
 import {twMerge} from 'tailwind-merge'
 
+import Button from '@/components/Button'
 import Profile from '@/components/Profile'
 import CommentBox from '@/components/RightCommentBar/CommentBox'
 
@@ -62,6 +63,10 @@ const RightCommentBar = ({className}: Props) => {
       )}>
       <div className="absolute top-0 left-0 right-0 flex justify-end items-center h-18 px-9 border-b border-n-3 lg:pr-18 md:pr-16">
         <Profile position="right" />
+        <Button
+          name="Login"
+          onClick={() => console.log('click login button')}
+        />
       </div>
       <div className="absolute top-24 left-0 right-0 flex items-center px-9 md:px-6">
         <div className="base2 text-n-4/75">Comment Length</div>
