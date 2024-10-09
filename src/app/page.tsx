@@ -1,3 +1,7 @@
-export default function Home() {
-  return <h1>Hello World!</h1>
+import MainPage from '@/templates/MainPage'
+
+const Home = () => {
+  return <MainPage />
 }
+
+export default Home
