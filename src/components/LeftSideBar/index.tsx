@@ -13,8 +13,15 @@ const LeftSideBar = ({isLeftSideBarVisible}: Props) => {
     {
       title: '게시글',
       url: '/Blog',
+      icon: 'blog',
+      iconClass: 'fill-accent-2',
     },
-    {title: '즐겨찾기', url: '/Favorites'},
+    {
+      title: '즐겨찾기',
+      url: '/Favorites',
+      icon: 'favorites',
+      iconClass: 'fill-accent-5',
+    },
   ]
 
   return (

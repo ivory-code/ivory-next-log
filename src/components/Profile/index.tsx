@@ -20,7 +20,7 @@ const Profile = ({position = 'left', isSideBarVisible}: Props) => (
         />
         <div className="absolute -right-0.75 -bottom-0.75 w-4.5 h-4.5 bg-primary-2 rounded-full border-4 border-n-6" />
       </div>
-      {position === 'left' ? (
+      {position === 'left' && !isSideBarVisible ? (
         <div className="text-n-1 base2 font-extrabold">khs-log</div>
       ) : null}
     </div>
