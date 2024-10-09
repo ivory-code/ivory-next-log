@@ -15,7 +15,6 @@ const BlogCard = ({url}: Props) => {
             className="rounded-xl object-cover"
             src="/images/ogu.webp"
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1499px) 50vw, 33.33vw"
             alt="blogContent"
           />
         </div>

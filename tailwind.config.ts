@@ -1,3 +1,5 @@
+import plugin from 'tailwindcss/plugin'
+
 import type {Config} from 'tailwindcss'
 
 const config: Config = {
@@ -103,6 +105,58 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({addBase, addComponents, addUtilities}) {
+      addBase({
+        html: {
+          '@apply text-[1rem]': {},
+        },
+        body: {
+          '@apply bg-n-7 text-[1rem] leading-6 -tracking-[.01em] text-n-7 antialiased md:bg-n-1 dark:text-n-1 dark:md:bg-n-6':
+            {},
+        },
+      })
+      addComponents({
+        '.base1': {
+          '@apply font-sans text-[1rem] leading-6 font-medium -tracking-[.03em]':
+            {},
+        },
+        '.base2': {
+          '@apply font-sans text-[0.875rem] leading-6 font-medium -tracking-[.02em]':
+            {},
+        },
+        '.caption1': {
+          '@apply font-sans text-[0.75rem] leading-5 font-medium -tracking-[.03em]':
+            {},
+        },
+        '.caption2': {
+          '@apply font-sans text-[0.6875rem] leading-4 font-medium -tracking-[.01em]':
+            {},
+        },
+        '.btn': {
+          '@apply inline-flex items-center justify-center h-12 px-5.5 border-2 rounded-xl base2 font-semibold transition-colors disabled:opacity-20 disabled:pointer-events-none':
+            {},
+        },
+        '.btn-dark': {
+          '@apply btn bg-n-7 border-n-7 text-n-1 fill-n-1 hover:bg-n-5 hover:border-n-5 dark:bg-n-1 dark:border-n-1 dark:text-n-7 dark:fill-n-7 dark:hover:border-transparent dark:hover:text-primary-1 dark:hover:fill-primary-1':
+            {},
+        },
+        '.btn-white': {
+          '@apply btn bg-n-1 border-transparent shadow-[0_0.125rem_0.25rem_rgba(0,0,0,0.15)] text-n-7 fill-n-7 hover:bg-n-2 dark:bg-n-6 dark:border-n-1/10 dark:text-n-1 dark:fill-n-1 dark:hover:bg-n-1/10':
+            {},
+        },
+        '.btn-large': {
+          '@apply h-13': {},
+        },
+        '.btn-medium': {
+          '@apply h-10': {},
+        },
+        '.btn-small': {
+          '@apply h-9 px-4 border rounded-md': {},
+        },
+      })
+      addUtilities({})
+    }),
+  ],
 }
 export default config

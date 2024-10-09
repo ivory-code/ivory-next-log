@@ -26,17 +26,15 @@ const CommentBox = ({item}: Props) => {
             fill
           />
         </div>
-        <div className="truncate caption1 text-pastelBlue font-bold">
+        <div className="truncate base1 font-semibold text-n-6">
           {item.username}
         </div>
       </div>
       <Link className="block mt-2 pl-3" href={item.url}>
-        <div className="group py-3 px-3 rounded-xl transition-colors hover:bg-n-3/75 dark:hover:bg-n-5">
-          <div className="mt-1 caption1 text-pastelYellow font-medium">
-            {item.content}
-          </div>
+        <div className="group py-3 px-3 rounded-xl transition-colors hover:bg-n-3/75">
+          <div className="mt-1 base2 text-n-5">{item.content}</div>
           <div className="flex justify-between items-center mt-2">
-            <div className="caption2 text-n-4">{item.time}</div>
+            <div className="caption2 text-n-4/75">{item.time}</div>
           </div>
         </div>
       </Link>

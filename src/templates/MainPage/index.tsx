@@ -3,15 +3,15 @@
 import React from 'react'
 
 import BlogCard from '@/components/BlogCard'
-import LeftSideBar from '@/components/LeftSideBar'
-import RightCommentBar from '@/components/RightCommentBar'
+import Layout from '@/components/Layout'
 
 const MainPage = () => {
   return (
     <>
-      <LeftSideBar />
-      <BlogCard url="/" />
-      <RightCommentBar />
+      <Layout>
+        <BlogCard url="/" />
+        <BlogCard url="/" />
+      </Layout>
     </>
   )
 }

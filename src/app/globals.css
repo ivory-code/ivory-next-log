@@ -66,10 +66,6 @@ button {
   @apply font-bold text-xl;
 }
 
-.label {
-  @apply bg-pastelPink px-4 py-2 rounded-l-lg border-2 border-black;
-}
-
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }

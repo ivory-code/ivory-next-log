@@ -14,13 +14,14 @@ type NavigationType = {
 
 interface Props {
   items: NavigationType[]
+  isSideBarVisible?: boolean
 }
 
-const Navigation = ({items}: Props) => {
+const Navigation = ({items, isSideBarVisible}: Props) => {
   const pathname = usePathname()
 
   return (
-    <div>
+    <div className={`${isSideBarVisible && 'px-2'}`}>
       {items.map((item, index) => (
         <Link
           className={twMerge(
@@ -39,7 +40,7 @@ const Navigation = ({items}: Props) => {
               alt="navigation"
             />
           </div>
-          <div className="ml-5">{item.title}</div>
+          {!isSideBarVisible && <div className="ml-5">{item.title}</div>}
         </Link>
       ))}
     </div>

@@ -11,7 +11,7 @@ const Image = ({className, ...props}: ImageProps) => {
       className={`inline-block align-top opacity-0 transition-opacity ${
         loaded && 'opacity-100'
       } ${className}`}
-      onLoadingComplete={() => setLoaded(true)}
+      onLoad={() => setLoaded(true)}
       {...props}
     />
   )
