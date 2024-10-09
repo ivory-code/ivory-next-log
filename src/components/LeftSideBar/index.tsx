@@ -1,6 +1,8 @@
 import {twMerge} from 'tailwind-merge'
 
-import Navigation from '@/components/LeftSideBar/Navigation'
+import Navigation, {
+  type NavigationType,
+} from '@/components/LeftSideBar/Navigation'
 import MainTitle from '@/components/MainTitle'
 import Profile from '@/components/Profile'
 
@@ -9,7 +11,7 @@ interface Props {
 }
 
 const LeftSideBar = ({isLeftSideBarVisible}: Props) => {
-  const navigation = [
+  const navigation: NavigationType[] = [
     {
       title: '홈',
       url: '/',
@@ -24,8 +26,8 @@ const LeftSideBar = ({isLeftSideBarVisible}: Props) => {
     },
     {
       title: '즐겨찾기',
-      url: '/Favorites',
-      icon: 'favorites',
+      url: '/Favorite',
+      icon: 'favorite',
       iconClass: 'fill-accent-5',
     },
   ]

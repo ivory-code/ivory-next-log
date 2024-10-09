@@ -6,7 +6,7 @@ import {twMerge} from 'tailwind-merge'
 
 import Icon, {type IconName} from '@/components/Icon'
 
-type NavigationType = {
+export type NavigationType = {
   title: string
   url: string
   icon: IconName
