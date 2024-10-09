@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {twMerge} from 'tailwind-merge'
+
 import Image from '@/components/Image'
 
 type NavigationType = {

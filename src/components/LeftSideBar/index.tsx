@@ -1,6 +1,6 @@
 import Navigation from '@/components/LeftSideBar/Navigation'
-import Profile from '@/components/LeftSideBar/Profile'
 import MainTitle from '@/components/MainTitle'
+import Profile from '@/components/Profile'
 
 const LeftSideBar = () => {
   const navigation = [
