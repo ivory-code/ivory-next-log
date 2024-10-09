@@ -18,12 +18,13 @@ const CommentBox = ({item}: Props) => {
   return (
     <div className="relative mt-2">
       <div className="flex items-center space-x-3">
-        <div className="relative w-10 h-10 border-2 border-n-4/50 rounded-md overflow-hidden bg-pastelBlue">
+        <div className="relative w-10 h-10 border-2 border-n-4/50 rounded-md overflow-hidden bg-pastelBlue flex items-center justify-center">
           <Image
             className="object-cover"
             alt="check"
             src="/images/smileHeart.png"
-            fill
+            width={30}
+            height={30}
           />
         </div>
         <div className="truncate base1 font-semibold text-n-6">

@@ -5,6 +5,7 @@ import React from 'react'
 
 import Icon, {type IconName} from '@/components/Icon'
 import Layout from '@/components/Layout'
+import LoginForm from '@/components/LoginForm'
 import Typography from '@/components/Typography'
 
 interface IconProps {
@@ -46,9 +47,10 @@ const MainPage = () => {
   return (
     <>
       <Layout isMainView>
+        <LoginForm className="flex justify-end items-center h-18 mb-6 selection:border-b border-n-3" />
         <Typography
           text="안녕하세요!! 반갑습니다! 👋🏻"
-          className="mb-4 h2 md:pr-16 md:h3 font-black text-n-7"
+          className="mb-4 h2 md:h3 font-black text-n-7"
         />
         <Typography
           text="dev-khs, Frontend-Developer 💻"

@@ -38,7 +38,7 @@ const MarkdownEditor = () => {
       <div className="flex justify-end items-center h-18">
         <Link href="/Blog">
           <Button
-            name="게시글 등록"
+            buttonName="게시글 등록"
             onClick={() => console.log('click create button')}
             className="border border-gray-300"
           />
