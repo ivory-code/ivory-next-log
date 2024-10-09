@@ -11,6 +11,12 @@ interface Props {
 const LeftSideBar = ({isLeftSideBarVisible}: Props) => {
   const navigation = [
     {
+      title: '홈',
+      url: '/',
+      icon: 'home',
+      iconClass: 'fill-accent-1',
+    },
+    {
       title: '게시글',
       url: '/Blog',
       icon: 'blog',
