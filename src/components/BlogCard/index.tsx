@@ -5,13 +5,13 @@ import Image from '@/components/Image'
 import Typography from '@/components/Typography'
 
 interface Props {
-  id: number
+  id: string
   title: string
+  imageUrl: string
   content: string
-  image: string
 }
 
-const BlogCard = ({id, title, content, image}: Props) => {
+const BlogCard = ({id, title, imageUrl, content}: Props) => {
   const pathname = usePathname()
 
   const isBlogPage = pathname.includes('Blog')
@@ -22,7 +22,7 @@ const BlogCard = ({id, title, content, image}: Props) => {
         <div className={`relative w-full aspect-[2.4]`}>
           <Image
             className="rounded-xl object-cover"
-            src={image}
+            src={imageUrl}
             fill
             alt="blogContent"
             priority

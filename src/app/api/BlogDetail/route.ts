@@ -1,36 +1,34 @@
-import {NextResponse} from 'next/server'
+import {type NextRequest, NextResponse} from 'next/server'
 
-export const MOCK_DATA = [
-  {
-    id: 1,
-    title: '1st Title',
-    content:
-      '1st Content 1st Content 1st Content 1st Content 1st Content 1st Content',
-    image: '/images/ogu.webp',
-  },
-  {
-    id: 2,
-    title: '2nd 제목 2nd 제목 2nd 제목 2nd 제목 2nd 제목',
-    content:
-      '2번째 콘텐츠 2번째 콘텐츠 2번째 콘텐츠 2번째 콘텐츠 2번째 콘텐츠 2번째 콘텐츠 2번째 콘텐츠 2번째 콘텐츠',
-    image: '/images/doguri.png',
-  },
-  {
-    id: 3,
-    title: '3rd Title',
-    content:
-      '3rd contents 3rd contents 3rd contents 3rd contents 3rd contents 3rd contents 3rd contents 3rd contents 3rd contents',
-    image: '/images/ogu.webp',
-  },
-  {
-    id: 4,
-    title: '4th 제목 4th 제목 4th 제목 4th 제목',
-    content: '4th 4th 4th 4th 4th',
-    image: '/images/doguri.png',
-  },
-]
+import {createBrowserClient} from '@/supabase/client'
 
-// GET 요청 처리 함수
-export async function GET() {
-  return NextResponse.json(MOCK_DATA, {status: 200})
+export async function GET(req: NextRequest) {
+  const supabase = createBrowserClient()
+
+  const {searchParams} = new URL(req.url)
+
+  const blogId = searchParams.get('id')
+
+  if (!blogId) {
+    return NextResponse.json({error: 'Blog ID is required'}, {status: 400})
+  }
+
+  try {
+    const {data, error} = await supabase
+      .from('posts')
+      .select('*')
+      .eq('id', blogId)
+      .single()
+
+    if (error) {
+      return NextResponse.json({error: error.message}, {status: 500})
+    }
+
+    return NextResponse.json(data)
+  } catch (error) {
+    return NextResponse.json(
+      {error: 'Error fetching blog detail'},
+      {status: 500},
+    )
+  }
 }
