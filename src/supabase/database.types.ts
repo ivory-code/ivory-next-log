@@ -17,6 +17,7 @@ export type Database = {
           post_id: string | null
           updated_at: string | null
           user_id: string | null
+          user_role: string
           username: string
         }
         Insert: {
@@ -26,6 +27,7 @@ export type Database = {
           post_id?: string | null
           updated_at?: string | null
           user_id?: string | null
+          user_role: string
           username?: string
         }
         Update: {
@@ -35,6 +37,7 @@ export type Database = {
           post_id?: string | null
           updated_at?: string | null
           user_id?: string | null
+          user_role?: string
           username?: string
         }
         Relationships: [
@@ -51,6 +54,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'users'
             referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'comments_user_role_fkey'
+            columns: ['user_role']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['role']
           },
         ]
       }
