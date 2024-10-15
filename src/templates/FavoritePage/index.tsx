@@ -1,17 +1,46 @@
 'use client'
 
-import React from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 
+import {getBlogsFavorites} from '@/app/api/getFavorite'
 import BlogList from '@/components/BlogList'
 import Layout from '@/components/Layout'
+import {useUser} from '@/store/user'
+import {type Database} from '@/supabase/database.types'
 
 const FavoritePage = () => {
+  const user = useUser(state => state.user)
+
+  const [favoritesData, setFavoritesData] = useState<
+    Database['public']['Tables']['favorites']['Row'][]
+  >([])
+
+  const fetchFavoritesData = useCallback(async () => {
+    if (!user?.id) {
+      return
+    }
+
+    const data = await getBlogsFavorites({userId: user.id})
+
+    setFavoritesData(data ?? [])
+  }, [user?.id])
+
+  useEffect(() => {
+    void fetchFavoritesData()
+  }, [fetchFavoritesData])
+
   return (
     <>
       <Layout>
-        <BlogList url="/" />
-        <BlogList url="/Blog" />
-        <BlogList url="/Favorite" />
+        {favoritesData.length > 0
+          ? favoritesData.map(data => (
+              <BlogList
+                key={`${data.id}`}
+                url={`/BlogDetail/${data.post_id}`}
+                title={data.post_title}
+              />
+            ))
+          : null}
       </Layout>
     </>
   )

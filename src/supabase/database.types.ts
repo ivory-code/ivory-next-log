@@ -57,17 +57,23 @@ export type Database = {
       favorites: {
         Row: {
           created_at: string
+          id: string
           post_id: string | null
+          post_title: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
+          id?: string
           post_id?: string | null
+          post_title: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
+          id?: string
           post_id?: string | null
+          post_title?: string
           user_id?: string | null
         }
         Relationships: [
@@ -77,6 +83,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'posts'
             referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'favorites_post_title_fkey'
+            columns: ['post_title']
+            isOneToOne: false
+            referencedRelation: 'posts'
+            referencedColumns: ['title']
           },
           {
             foreignKeyName: 'Favorites_user_id_fkey'

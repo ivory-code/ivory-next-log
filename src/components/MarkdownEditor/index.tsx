@@ -10,6 +10,7 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import MarkdownView from '@/components/MarkdownView'
 import Textarea from '@/components/Textarea'
+import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 
 const MarkdownEditor = () => {
@@ -58,11 +59,9 @@ const MarkdownEditor = () => {
     <div className="flex flex-col h-screen p-4">
       <div className="flex justify-end items-center h-18">
         <Link href="/Blog">
-          <Button
-            buttonName="게시글 등록"
-            onClick={handleCreate}
-            className="border border-gray-300"
-          />
+          <Button onClick={handleCreate} className="border border-gray-300">
+            <Typography text="게시글 등록" className="base2" />
+          </Button>
         </Link>
       </div>
       <div className="mb-4">

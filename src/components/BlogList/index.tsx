@@ -5,9 +5,10 @@ import Typography from '@/components/Typography'
 
 interface Props {
   url: string
+  title: string
 }
 
-const BlogList = ({url}: Props) => {
+const BlogList = ({url, title}: Props) => {
   return (
     <Link
       className="group flex items-center mb-5 p-3.5 border border-n-3 rounded-xl h6 transition-all hover:border-transparent hover:shadow-[0_0_1rem_0.25rem_rgba(0,0,0,0.04),0px_2rem_1.5rem_-1rem_rgba(0,0,0,0.12)] last:mb-0 2xl:p-2.5 lg:p-3.5"
@@ -20,7 +21,7 @@ const BlogList = ({url}: Props) => {
           fill="fill-accent-6"
         />
       </div>
-      <Typography text="즐겨찾기 리스트입니다." />
+      <Typography text={title} />
       <Icon
         className="ml-auto fill-n-4 transition-colors"
         iconName="arrowNext"

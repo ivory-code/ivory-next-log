@@ -1,5 +1,6 @@
 import Button from '@/components/Button'
 import Profile from '@/components/Profile'
+import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
 
@@ -39,7 +40,9 @@ const LoginForm = ({className}: Props) => {
         isLogin={isLogin}
         nickname={user?.nickname ?? ''}
       />
-      <Button buttonName={user ? 'Logout' : 'Login'} type="submit" />
+      <Button type="submit">
+        <Typography text={user ? 'Logout' : 'Login'} className="base2" />
+      </Button>
     </form>
   )
 }

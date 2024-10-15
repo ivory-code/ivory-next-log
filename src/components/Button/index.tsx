@@ -1,17 +1,19 @@
+import {type ReactElement} from 'react'
+
 interface Props {
-  buttonName: string
   type?: 'submit' | 'reset' | 'button'
   className?: string
-  onClick?: () => void
+  onClick?: (event: React.FormEvent) => void | Promise<void>
+  children: ReactElement
 }
 
-const Button = ({buttonName, className, onClick, type = 'button'}: Props) => {
+const Button = ({className, onClick, type = 'button', children}: Props) => {
   return (
     <button
       className={`btn-dark btn-small ${className}`}
       onClick={onClick}
       type={type}>
-      {buttonName}
+      {children}
     </button>
   )
 }
