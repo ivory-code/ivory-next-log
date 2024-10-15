@@ -5,7 +5,7 @@ import Navigation, {
 } from '@/components/LeftSideBar/Navigation'
 import MainTitle from '@/components/MainTitle'
 import Profile from '@/components/Profile'
-import {useUser} from '@/store/user'
+import {type User} from '@/store/user'
 
 const NAVIGATION: NavigationType[] = [
   {
@@ -35,12 +35,11 @@ const NAVIGATION: NavigationType[] = [
 ]
 
 interface Props {
+  user: User | null
   isLeftSideBarVisible?: boolean
 }
 
-const LeftSideBar = ({isLeftSideBarVisible}: Props) => {
-  const user = useUser(state => state.user)
-
+const LeftSideBar = ({user, isLeftSideBarVisible}: Props) => {
   const isLogin = user !== null
 
   return (

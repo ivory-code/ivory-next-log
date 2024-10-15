@@ -1,8 +1,8 @@
 'use client'
 
-import React, {useEffect, useState} from 'react'
+import axios from 'axios'
+import React, {useCallback, useEffect, useState} from 'react'
 
-import {getBlogs} from '@/app/api/getBlog'
 import BlogCard from '@/components/BlogCard'
 import Layout from '@/components/Layout'
 import {type Database} from '@/supabase/database.types'
@@ -12,13 +12,16 @@ const BlogPage = () => {
     Database['public']['Tables']['posts']['Row'][] | null
   >()
 
-  useEffect(() => {
-    getBlogs().then(res => {
-      if (res) {
-        setBlogsData(res)
-      }
-    })
+  const fetchBlogsData = useCallback(async () => {
+    const res = await axios(`/api/Blog`)
+    const data = await res.data
+
+    setBlogsData(data.posts)
   }, [])
+
+  useEffect(() => {
+    void fetchBlogsData()
+  }, [fetchBlogsData])
 
   return (
     <>

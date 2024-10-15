@@ -1,10 +1,23 @@
-import {useState} from 'react'
+import {useCallback, useState} from 'react'
 
 import Icon from '@/components/Icon'
 import Input from '@/components/Input'
 
-const CommentInput = () => {
+interface Props {
+  onClick: (content: string) => Promise<void>
+}
+
+const CommentInput = ({onClick}: Props) => {
   const [commentValue, setCommentValue] = useState('')
+
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault()
+
+      await onClick(commentValue)
+    },
+    [commentValue, onClick],
+  )
 
   return (
     <div className="relative md:w-full md:mr-0">
@@ -14,11 +27,13 @@ const CommentInput = () => {
           iconName="search"
         />
       </div>
-      <Input
-        value={commentValue}
-        onChange={e => setCommentValue(e.target.value)}
-        placeholder="댓글을 입력해주세요."
-      />
+      <form onSubmit={handleSubmit}>
+        <Input
+          value={commentValue}
+          onChange={e => setCommentValue(e.target.value)}
+          placeholder="댓글을 입력해주세요."
+        />
+      </form>
     </div>
   )
 }

@@ -32,7 +32,8 @@ export default function SessionProvider({children}: Props) {
         role: data?.role ?? '',
         email: data?.email ?? '',
         created_at: data?.created_at ?? new Date().toISOString(),
-        nickname: userSession.session.user.user_metadata.user_name ?? '',
+        // nickname: userSession.session.user.user_metadata.user_name ?? '',
+        nickname: data?.username ?? '',
       })
     }
   }

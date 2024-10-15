@@ -1,5 +1,6 @@
 'use client'
 
+import axios from 'axios'
 import {useParams} from 'next/navigation'
 import React, {Suspense, useCallback, useEffect, useState} from 'react'
 import {remark} from 'remark'
@@ -13,9 +14,11 @@ import {type Database} from '@/supabase/database.types'
 
 const BlogDetailPage = () => {
   const params = useParams()
+
   const [blogDetailData, setBlogDetailData] = useState<
     Database['public']['Tables']['posts']['Row'] | null
   >(null)
+
   const [htmlContent, setHtmlContent] = useState('')
 
   const convertMarkdownToHtml = useCallback(async (markdownBody: string) => {
@@ -24,10 +27,10 @@ const BlogDetailPage = () => {
   }, [])
 
   const fetchBlogDetailData = useCallback(async () => {
-    const res = await fetch(`/api/BlogDetail?id=${params.id}`)
-    const data = await res.json()
+    const res = await axios(`/api/BlogDetail?id=${params.id}`)
+    const data = await res.data
 
-    setBlogDetailData(data)
+    setBlogDetailData(data.post)
   }, [params.id])
 
   useEffect(() => {
