@@ -2,12 +2,19 @@ import {twMerge} from 'tailwind-merge'
 
 interface Props {
   value: string
+  defaultValue?: string
   className?: string
   placeholder?: string
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const Input = ({value, className, placeholder = '', onChange}: Props) => {
+const Input = ({
+  value,
+  className,
+  placeholder = '',
+  onChange,
+  defaultValue,
+}: Props) => {
   return (
     <input
       className={twMerge(
@@ -17,6 +24,7 @@ const Input = ({value, className, placeholder = '', onChange}: Props) => {
       name="search"
       placeholder={placeholder}
       value={value}
+      defaultValue={defaultValue}
       onChange={onChange}
     />
   )

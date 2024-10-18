@@ -32,6 +32,12 @@ const NAVIGATION: NavigationType[] = [
     icon: 'create',
     iconClass: 'fill-primary-2',
   },
+  {
+    title: '글 관리하기',
+    url: '/BlogDashBoard',
+    icon: 'settings',
+    iconClass: 'fill-accent-3',
+  },
 ]
 
 interface Props {

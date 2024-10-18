@@ -34,11 +34,14 @@ const FavoritePage = () => {
       <Layout>
         {favoritesData.length > 0
           ? favoritesData.map(data => (
-              <BlogList
+              <div
                 key={`${data.id}`}
-                url={`/BlogDetail/${data.post_id}`}
-                title={data.post_title}
-              />
+                className="flex justify-center items-center">
+                <BlogList
+                  url={`/BlogDetail/${data.post_id}`}
+                  title={data.post_title}
+                />
+              </div>
             ))
           : null}
       </Layout>

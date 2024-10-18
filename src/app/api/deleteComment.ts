@@ -1,4 +1,4 @@
-import { createBrowserClient } from "@/supabase/client"
+import {createBrowserClient} from '@/supabase/client'
 
 export async function deleteComment({
   userId,
@@ -12,11 +12,16 @@ export async function deleteComment({
   const supabase = createBrowserClient()
 
   try {
-    const query = role === 'admin'
-      ? supabase.from('comments').delete().eq('id', commentId)
-      : supabase.from('comments').delete().eq('user_id', userId).eq('id', commentId)
+    const query =
+      role === 'admin'
+        ? supabase.from('comments').delete().eq('id', commentId)
+        : supabase
+            .from('comments')
+            .delete()
+            .eq('user_id', userId)
+            .eq('id', commentId)
 
-    const { data, error } = await query
+    const {data, error} = await query
 
     if (error) {
       alert('삭제 권한이 없습니다.')
@@ -25,6 +30,7 @@ export async function deleteComment({
 
     return data
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error)
     return null
   }
