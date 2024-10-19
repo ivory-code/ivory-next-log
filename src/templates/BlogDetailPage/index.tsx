@@ -97,7 +97,7 @@ const BlogDetailPage = () => {
     <Layout>
       <Suspense fallback={<Typography text="Loading..." />}>
         {blogDetailData ? (
-          <>
+          <div>
             {blogDetailData.titleImageUrl && (
               <div className="relative w-full aspect-[2.4]">
                 <Image
@@ -130,7 +130,7 @@ const BlogDetailPage = () => {
                 className="mt-4 body2 font-semibold text-n-6"
               />
             </div>
-          </>
+          </div>
         ) : (
           <Typography text="No blog data found." />
         )}

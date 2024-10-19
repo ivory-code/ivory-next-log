@@ -2,6 +2,7 @@ import {twMerge} from 'tailwind-merge'
 
 interface Props {
   value: string
+  name?: string
   defaultValue?: string
   className?: string
   placeholder?: string
@@ -14,9 +15,11 @@ const Textarea = ({
   placeholder = '',
   onChange,
   defaultValue,
+  name = '',
 }: Props) => {
   return (
     <textarea
+      name={name}
       value={value}
       defaultValue={defaultValue}
       onChange={onChange}

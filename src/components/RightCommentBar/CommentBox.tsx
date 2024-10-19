@@ -1,3 +1,5 @@
+import {format, parseISO} from 'date-fns'
+import {toZonedTime} from 'date-fns-tz'
 import Link from 'next/link'
 import {useCallback, useState} from 'react'
 
@@ -29,6 +31,11 @@ const CommentBox = ({
   const isDeleteButtonVisible =
     user?.id === item.user_id || user?.role === 'admin'
 
+  const timeZone = 'Asia/Seoul'
+  const createdAt = parseISO(item.created_at) // ISO 문자열을 파싱하여 Date 객체로 변환
+  const createdAtKST = toZonedTime(createdAt, timeZone) // UTC 시간을 KST로 변환
+  const formattedDate = format(createdAtKST, 'yyyy-MM-dd HH:mm:ss') // 원하는 형식으로 포맷팅
+
   const handleTooltipVisible = useCallback(() => {
     setIsTooltipVisible(!isTooltipVisible)
   }, [isTooltipVisible])
@@ -44,7 +51,7 @@ const CommentBox = ({
   }, [onClickNegativeButton])
 
   return (
-    <>
+    <div>
       <div className="relative flex flex-row justify-between items-center">
         <Link
           className={`block mt-2 ${isDisabled && 'cursor-default'}`}
@@ -57,12 +64,12 @@ const CommentBox = ({
             </div>
             <div className="mt-1 base2 text-n-5">{item.content}</div>
             <div className="flex justify-between items-center mt-2">
-              <div className="caption2 text-n-4/75">{item.created_at}</div>
+              <div className="caption2 text-n-4/75">{formattedDate}</div>
             </div>
           </div>
         </Link>
         {isDeleteButtonVisible && (
-          <>
+          <div>
             <IconButton
               onClick={handleTooltipVisible}
               iconName="delete"
@@ -79,10 +86,10 @@ const CommentBox = ({
                 <Typography text="아니오" />
               </Button>
             </TooltipModal>
-          </>
+          </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
 

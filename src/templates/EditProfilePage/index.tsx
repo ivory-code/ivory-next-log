@@ -7,7 +7,7 @@ import {createProfile} from '@/app/api/createProfile'
 import {editProfile} from '@/app/api/editProfile'
 import Button from '@/components/Button'
 import Image from '@/components/Image'
-import Input from '@/components/Input'
+import InputField from '@/components/InputField'
 import Layout from '@/components/Layout'
 import Textarea from '@/components/Textarea'
 import Typography from '@/components/Typography'
@@ -36,72 +36,80 @@ const EditProfilePage = () => {
   const [profileData, setProfileData] =
     useState<Database['public']['Tables']['profile']['Row']>()
 
-  const [mainTitle, setMainTitle] = useState('')
-  const [subTitle, setSubTitle] = useState('')
-  const [content, setContent] = useState('')
+  const [formState, setFormState] = useState({
+    mainTitle: '',
+    subTitle: '',
+    content: '',
+    imageUrl: '',
+  })
+
   const [imageFile, setImageFile] = useState<File | null>(null)
-  const [imageUrl, setImageUrl] = useState<string>('')
 
-  const handleChange =
-    (setter: React.Dispatch<React.SetStateAction<string>>) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setter(event.target.value)
-    }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const {name, value} = e.target
+    setFormState(prevState => ({...prevState, [name]: value}))
+  }
 
-  // 이미지 파일이 변경될 때 실행되는 함수
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
+    if (event.target.files) {
       const file = event.target.files[0]
       setImageFile(file)
 
       // 이미지 미리보기 URL 생성
       const previewUrl = URL.createObjectURL(file)
-      setImageUrl(previewUrl)
+      setFormState(prevState => ({...prevState, imageUrl: previewUrl}))
     }
   }
 
   const fetchProfileData = useCallback(async () => {
     try {
-      const res = await axios(`/api/EditProfile`)
-      const data = await res.data.profileData[0]
-      setProfileData(data)
+      const {data} = await axios.get('/api/EditProfile')
+      if (data.profileData[0]) {
+        const {mainTitle, subTitle, contents, imageUrl} = data.profileData[0]
+        setFormState({
+          mainTitle: mainTitle || '',
+          subTitle: subTitle || '',
+          content: contents || '',
+          imageUrl: imageUrl || '',
+        })
+        setProfileData(data.profileData[0])
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching profile data:', error)
     }
   }, [])
 
-  const handleSaveProfile = useCallback(async () => {
-    let uploadedImageUrl = imageUrl
+  const uploadImage = useCallback(async () => {
+    if (!imageFile) return formState.imageUrl
 
-    if (imageFile) {
-      const {data, error} = await supabase.storage
-        .from('images')
-        .upload(imageFile.name, imageFile, {
-          cacheControl: '0',
-          upsert: true,
-        })
+    const {error} = await supabase.storage
+      .from('images')
+      .upload(imageFile.name, imageFile, {cacheControl: '0', upsert: true})
 
-      if (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error uploading image:', error)
-        return
-      }
-
-      if (data) {
-        const {data} = supabase.storage
-          .from('images')
-          .getPublicUrl(imageFile.name)
-        uploadedImageUrl = data.publicUrl || ''
-        setImageUrl(uploadedImageUrl)
-      }
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error uploading image:', error)
+      return formState.imageUrl
     }
+
+    const {data: publicUrlData} = supabase.storage
+      .from('images')
+      .getPublicUrl(imageFile.name)
+
+    return publicUrlData?.publicUrl || formState.imageUrl
+  }, [imageFile, formState.imageUrl, supabase])
+
+  const handleSaveProfile = useCallback(async () => {
+    const uploadedImageUrl = await uploadImage()
 
     const profilePayload = {
       role: user?.role ?? '',
-      contents: content,
-      mainTitle: mainTitle,
-      subTitle: subTitle,
+      contents: formState.content,
+      mainTitle: formState.mainTitle,
+      subTitle: formState.subTitle,
       skills: SKILLS,
       tools: TOOLS,
       imageUrl: uploadedImageUrl,
@@ -115,104 +123,88 @@ const EditProfilePage = () => {
       setProfileData(data)
     }
   }, [
-    content,
-    imageFile,
-    imageUrl,
-    mainTitle,
+    formState.content,
+    formState.mainTitle,
+    formState.subTitle,
     profileData,
-    subTitle,
-    supabase.storage,
+    uploadImage,
     user?.role,
   ])
 
   useEffect(() => {
-    void fetchProfileData()
+    fetchProfileData()
   }, [fetchProfileData])
 
-  useEffect(() => {
-    if (profileData) {
-      setMainTitle(profileData.mainTitle ?? '')
-      setSubTitle(profileData.subTitle ?? '')
-      setContent(profileData.contents ?? '')
-      setImageUrl(profileData.imageUrl ?? '')
-    }
-  }, [profileData])
-
   return (
-    <>
-      <Layout isMainView>
-        <div className="flex flex-col h-screen p-4">
-          <div className="flex justify-end items-center h-18">
-            <Button
-              type="submit"
-              onClick={handleSaveProfile}
-              className="border border-gray-300">
-              <Typography text="홈 추가/수정" className="base2" />
-            </Button>
-          </div>
-          <div className="mb-4">
-            <h2 className="text-xl font-bold mb-2">제목</h2>
-            <Input
-              value={mainTitle}
-              onChange={handleChange(setMainTitle)}
-              className={
-                'w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500'
-              }
+    <Layout isMainView>
+      <div className="flex flex-col h-screen p-4">
+        <div className="flex justify-end items-center h-18">
+          <Button
+            type="submit"
+            onClick={handleSaveProfile}
+            className="border border-gray-300">
+            <Typography text="홈 추가/수정" className="base2" />
+          </Button>
+        </div>
+
+        <InputField
+          label="제목"
+          name="mainTitle"
+          value={formState.mainTitle}
+          onChange={handleChange}
+        />
+
+        <InputField
+          label="부제목"
+          name="subTitle"
+          value={formState.subTitle}
+          onChange={handleChange}
+        />
+
+        <div className="flex flex-row">
+          <div className="mt-4 w-4/5 mr-2">
+            <h2 className="text-xl font-bold mb-2">내용</h2>
+            <Textarea
+              name="content"
+              value={formState.content}
+              onChange={handleChange}
+              className="w-full h-48 p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
             />
           </div>
-          <div className="mb-4">
-            <h2 className="text-xl font-bold mb-2">부제목</h2>
-            <Input
-              value={subTitle}
-              onChange={handleChange(setSubTitle)}
-              className={
-                'w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500'
-              }
-            />
-          </div>
-          <div className="flex flex-row">
-            <div className="mt-4 w-4/5 mr-2">
-              <h2 className="text-xl font-bold mb-2">내용</h2>
-              <Textarea
-                value={content}
-                onChange={handleChange(setContent)}
-                className="w-full h-48 p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            <div className="w-1/5">
-              <div className="flex flex-col justify-between">
-                <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-xl font-bold">이미지</h2>
-                  <label
-                    htmlFor="file-upload"
-                    className="border border-gray-300 p-2 rounded-md shadow-sm cursor-pointer hover:bg-gray-100">
-                    <Typography text="추가" className="base2" />
-                  </label>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
+
+          <div className="w-1/5">
+            <div className="flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-xl font-bold">이미지</h2>
+                <label
+                  htmlFor="file-upload"
+                  className="border border-gray-300 p-2 rounded-md shadow-sm cursor-pointer hover:bg-gray-100">
+                  <Typography text="추가" className="base2" />
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+              {formState.imageUrl && (
+                <div className="mt-2 flex justify-center items-center">
+                  <Image
+                    src={formState.imageUrl}
+                    alt="Uploaded"
+                    className="max-w-full h-auto rounded-md"
+                    width={140}
+                    height={115}
                   />
                 </div>
-                {imageUrl && (
-                  <div className="mt-2 flex justify-center items-center">
-                    <Image
-                      src={imageUrl}
-                      alt="Uploaded"
-                      className="max-w-full h-auto rounded-md"
-                      width={140}
-                      height={115}
-                    />
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
-      </Layout>
-    </>
+      </div>
+    </Layout>
   )
 }
 

@@ -2,16 +2,16 @@
 
 import React from 'react'
 
+import BlogEdit from '@/components/BlogEdit'
 import Layout from '@/components/Layout'
-import MarkdownEditor from '@/components/MarkdownEditor'
 
 const BlogCreatePage = () => {
   return (
-    <>
+    <div>
       <Layout isMainView>
-        <MarkdownEditor />
+        <BlogEdit />
       </Layout>
-    </>
+    </div>
   )
 }
 

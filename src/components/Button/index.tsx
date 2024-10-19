@@ -1,10 +1,10 @@
-import {type ReactElement} from 'react'
+import {type ReactNode} from 'react'
 
 interface Props {
   type?: 'submit' | 'reset' | 'button'
   className?: string
   onClick?: (event: React.FormEvent) => void | Promise<void>
-  children: ReactElement
+  children: ReactNode
 }
 
 const Button = ({className, onClick, type = 'button', children}: Props) => {

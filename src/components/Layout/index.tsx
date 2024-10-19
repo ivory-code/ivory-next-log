@@ -82,9 +82,9 @@ const Layout = ({children, isMainView = false}: Props) => {
       }
 
       if (isBlogDetailPage) {
-        setBlogCommentData(prevData => [...prevData, newComment])
+        setBlogCommentData(prevData => [newComment, ...prevData])
       } else {
-        setCommentsData(prevData => [...prevData, newComment])
+        setCommentsData(prevData => [newComment, ...prevData])
       }
     },
     [isBlogDetailPage, params.id, user?.role],

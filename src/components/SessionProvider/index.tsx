@@ -43,5 +43,5 @@ export default function SessionProvider({children}: Props) {
     // eslint-disable-next-line
   }, [])
 
-  return <>{children}</>
+  return <div>{children}</div>
 }

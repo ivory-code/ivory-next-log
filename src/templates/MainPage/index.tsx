@@ -50,7 +50,7 @@ const MainPage = () => {
   }, [])
 
   return (
-    <>
+    <div>
       <Layout isMainView>
         <LoginForm className="flex justify-end items-center h-18 mb-6 selection:border-b border-n-3" />
         <Typography
@@ -93,7 +93,7 @@ const MainPage = () => {
           )}
         </div>
       </Layout>
-    </>
+    </div>
   )
 }
 

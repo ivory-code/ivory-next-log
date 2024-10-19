@@ -88,7 +88,7 @@ const RightCommentBar = ({
       )}>
       <LoginForm className="absolute top-0 left-0 right-0 flex justify-end items-center h-18 px-9 border-b border-n-3 lg:pr-18 md:pr-16" />
       <div className="absolute top-24 left-0 right-0 flex items-center px-9 md:px-6">
-        <div className="base2 text-n-4/75">댓글 수</div>
+        <div className="base2 text-n-4/75">최근 댓글 수</div>
         <div className="ml-3 px-2 bg-n-3 rounded-lg caption1 text-n-4">
           {data?.length}
         </div>
