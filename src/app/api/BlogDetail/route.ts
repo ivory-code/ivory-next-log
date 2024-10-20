@@ -2,6 +2,8 @@ import {type NextRequest, NextResponse} from 'next/server'
 
 import {createBrowserClient} from '@/supabase/client'
 
+export const runtime = 'edge'
+
 export async function GET(req: NextRequest) {
   const supabase = createBrowserClient()
   const {searchParams} = new URL(req.url)
