@@ -9,7 +9,9 @@ interface Props {
   defaultValue?: string
   className?: string
   placeholder?: string
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
 }
 
 const InputField = ({

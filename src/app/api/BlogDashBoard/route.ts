@@ -6,7 +6,10 @@ export async function GET() {
   const supabase = createBrowserClient()
 
   try {
-    const {data: blogsData, error} = await supabase.from('posts').select('*')
+    const {data: blogsData, error} = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', {ascending: false})
 
     if (error) {
       return NextResponse.json({error}, {status: 500})
