@@ -11,10 +11,11 @@ const CommentInput = ({onClick}: Props) => {
   const [commentValue, setCommentValue] = useState('')
 
   const handleSubmit = useCallback(
-    async (event: React.FormEvent) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
 
       await onClick(commentValue)
+      setCommentValue('') // 제출 후 입력 필드 초기화
     },
     [commentValue, onClick],
   )

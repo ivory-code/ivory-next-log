@@ -25,19 +25,15 @@ const Navigation = ({items, isSideBarVisible = false}: Props) => {
   const user = useUser(state => state.user)
 
   // admin만 볼 수 있는 메뉴 필터링
-  const filteredItems = items.filter(item => {
-    if (
-      (item.title === '글 작성하기' || item.title === '글 관리하기') &&
-      user?.role !== 'admin'
-    ) {
-      return false // admin이 아니면 해당 메뉴 숨기기
-    }
-    return true
-  })
+  const filteredItems = items.filter(
+    item =>
+      !(item.title === '글 작성하기' || item.title === '글 관리하기') ||
+      user?.role === 'admin',
+  )
 
   return (
     <div className={twMerge(isSideBarVisible && 'px-2')}>
-      {filteredItems.map((item, index) => {
+      {filteredItems.map(item => {
         const isActive = pathname === item.url
         const linkClass = twMerge(
           'flex items-center justify-start h-12 base2 font-semibold text-n-3/75 rounded-lg transition-colors hover:text-n-1 px-3',
@@ -46,7 +42,7 @@ const Navigation = ({items, isSideBarVisible = false}: Props) => {
         )
 
         return (
-          <Link href={item.url} key={index} className={linkClass}>
+          <Link href={item.url} key={item.title} className={linkClass}>
             <div className="relative w-6 h-6 flex-shrink-0">
               <Icon iconName={item.icon} className={item.iconClass} />
             </div>

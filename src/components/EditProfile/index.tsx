@@ -6,6 +6,7 @@ import {useCallback, useEffect, useState} from 'react'
 import {createProfile} from '@/app/api/createProfile'
 import {editProfile} from '@/app/api/editProfile'
 import Button from '@/components/Button'
+import {SKILLS, TOOLS} from '@/components/EditProfile/constants'
 import Image from '@/components/Image'
 import Input from '@/components/Input'
 import Textarea from '@/components/Textarea'
@@ -14,55 +15,64 @@ import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
 import {type ProfileData} from '@/templates/EditProfilePage'
 
-const SKILLS = [
-  {name: 'javascript', bg: 'bg-accent-6'},
-  {name: 'react', bg: 'bg-accent-7'},
-  {name: 'nextjs', bg: 'bg-n-2'},
-  {name: 'graphql', bg: 'bg-accent-8'},
-]
-
-const TOOLS = [
-  {name: 'github', bg: 'bg-n-2'},
-  {name: 'googleAnalytics', bg: 'bg-accent-9'},
-  {name: 'firebase', bg: 'bg-accent-10'},
-  {name: 'figma', bg: 'bg-accent-11'},
-]
+const supabase = createBrowserClient()
 
 const EditProfile = () => {
   const user = useUser(state => state.user)
-  const supabase = createBrowserClient()
 
-  const [profileData, setProfileData] = useState<ProfileData>()
-
+  const [profileData, setProfileData] = useState<ProfileData | undefined>(
+    undefined,
+  )
   const [mainTitle, setMainTitle] = useState('')
   const [subTitle, setSubTitle] = useState('')
   const [content, setContent] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imageUrl, setImageUrl] = useState<string>('')
 
-  const handleChange =
+  const handleChange = useCallback(
     (setter: React.Dispatch<React.SetStateAction<string>>) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setter(event.target.value)
-    }
+      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+        setter(event.target.value),
+    [],
+  )
 
-  // 이미지 파일이 변경될 때 실행되는 함수
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0]
       setImageFile(file)
-
-      // 이미지 미리보기 URL 생성
-      const previewUrl = URL.createObjectURL(file)
-      setImageUrl(previewUrl)
+      setImageUrl(URL.createObjectURL(file))
     }
+  }
+
+  const uploadImage = async (file: File) => {
+    const {error} = await supabase.storage
+      .from('images')
+      .upload(file.name, file, {
+        cacheControl: '0',
+        upsert: true,
+      })
+
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error uploading image:', error)
+      return null
+    }
+
+    const {data: publicUrlData} = supabase.storage
+      .from('images')
+      .getPublicUrl(file.name)
+    return publicUrlData.publicUrl || ''
   }
 
   const fetchProfileData = useCallback(async () => {
     try {
-      const res = await axios(`/api/EditProfile`)
-      const data: ProfileData = await res.data.profileData[0]
-      setProfileData(data)
+      const {data} = await axios.get('/api/EditProfile')
+      const profile = data.profileData[0]
+      setProfileData(profile)
+      setMainTitle(profile.mainTitle ?? '')
+      setSubTitle(profile.subTitle ?? '')
+      setContent(profile.contents ?? '')
+      setImageUrl(profile.imageUrl ?? '')
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching profile data:', error)
@@ -70,47 +80,26 @@ const EditProfile = () => {
   }, [])
 
   const handleSaveProfile = useCallback(async () => {
-    let uploadedImageUrl = imageUrl
+    const uploadedImageUrl = imageFile ? await uploadImage(imageFile) : imageUrl
 
-    if (imageFile) {
-      const {data, error} = await supabase.storage
-        .from('images')
-        .upload(imageFile.name, imageFile, {
-          cacheControl: '0',
-          upsert: true,
-        })
-
-      if (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error uploading image:', error)
-        return
-      }
-
-      if (data) {
-        const {data} = supabase.storage
-          .from('images')
-          .getPublicUrl(imageFile.name)
-        uploadedImageUrl = data.publicUrl || ''
-        setImageUrl(uploadedImageUrl)
-      }
-    }
+    if (!uploadedImageUrl) return
 
     const profilePayload = {
       role: user?.role ?? '',
       contents: content,
-      mainTitle: mainTitle,
-      subTitle: subTitle,
+      mainTitle,
+      subTitle,
       skills: SKILLS,
       tools: TOOLS,
       imageUrl: uploadedImageUrl,
     }
 
-    const data = profileData
+    const updatedProfile = profileData
       ? await editProfile(profilePayload)
       : await createProfile(profilePayload)
 
-    if (data) {
-      setProfileData(data)
+    if (updatedProfile) {
+      setProfileData(updatedProfile)
     }
   }, [
     content,
@@ -119,22 +108,12 @@ const EditProfile = () => {
     mainTitle,
     profileData,
     subTitle,
-    supabase.storage,
     user?.role,
   ])
 
   useEffect(() => {
     fetchProfileData()
   }, [fetchProfileData])
-
-  useEffect(() => {
-    if (profileData) {
-      setMainTitle(profileData.mainTitle ?? '')
-      setSubTitle(profileData.subTitle ?? '')
-      setContent(profileData.contents ?? '')
-      setImageUrl(profileData.imageUrl ?? '')
-    }
-  }, [profileData])
 
   return (
     <div className="flex flex-col p-4">
@@ -151,9 +130,7 @@ const EditProfile = () => {
         <Input
           value={mainTitle}
           onChange={handleChange(setMainTitle)}
-          className={
-            'w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500'
-          }
+          className="w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
         />
       </div>
       <div className="mb-4">
@@ -161,9 +138,7 @@ const EditProfile = () => {
         <Input
           value={subTitle}
           onChange={handleChange(setSubTitle)}
-          className={
-            'w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500'
-          }
+          className="w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
         />
       </div>
       <div className="flex flex-row">

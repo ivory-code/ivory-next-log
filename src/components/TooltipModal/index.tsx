@@ -10,24 +10,28 @@ interface Props {
 const TooltipModal = ({
   isModalVisible,
   title,
-  description = '',
+  description,
   children,
 }: Props) => {
-  if (isModalVisible) {
-    return (
-      <div className="bg-slate-200 rounded-lg absolute bottom-10 right-0 transform translate-y-full px-10 py-4 shadow-md z-50">
-        <Typography text={title} className="base2 font-semibold" />
-        <div className="flex justify-around mt-2">
-          {children ? (
-            children
-          ) : (
-            <Typography text={description} className="caption1 font-semibold" />
-          )}
-        </div>
-      </div>
-    )
+  if (!isModalVisible) {
+    return null
   }
-  return null
+
+  return (
+    <div className="bg-slate-200 rounded-lg absolute bottom-10 right-0 transform translate-y-full px-10 py-4 shadow-md z-50">
+      <Typography text={title} className="base2 font-semibold" />
+      <div className="flex justify-around mt-2">
+        {children
+          ? children
+          : description && (
+              <Typography
+                text={description}
+                className="caption1 font-semibold"
+              />
+            )}
+      </div>
+    </div>
+  )
 }
 
 export default TooltipModal

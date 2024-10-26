@@ -4,7 +4,7 @@ import Typography from '@/components/Typography'
 interface Props {
   label: string
   onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-  imageUrl: string | null
+  imageUrl?: string
 }
 
 const ImageUpload = ({label, onImageChange, imageUrl}: Props) => (

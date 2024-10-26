@@ -1,7 +1,8 @@
 import {format, parseISO} from 'date-fns'
 import {toZonedTime} from 'date-fns-tz'
 import Link from 'next/link'
-import {useCallback, useState} from 'react'
+import {useCallback, useState, useMemo} from 'react'
+import {twMerge} from 'tailwind-merge'
 
 import Button from '@/components/Button'
 import IconButton from '@/components/IconButton'
@@ -14,7 +15,6 @@ export type CommentData = Database['public']['Tables']['comments']['Row']
 
 interface Props {
   isDisabled?: boolean
-  isTooltipVisible?: boolean
   item: CommentData
   onClickPositiveButton?: () => void
   onClickNegativeButton?: () => void | Promise<void>
@@ -27,40 +27,48 @@ const CommentBox = ({
   onClickNegativeButton,
 }: Props) => {
   const user = useUser(state => state.user)
-
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
   const isDeleteButtonVisible =
     user?.id === item.user_id || user?.role === 'admin'
 
-  const timeZone = 'Asia/Seoul'
-  const createdAt = parseISO(item.created_at) // ISO 문자열을 파싱하여 Date 객체로 변환
-  const createdAtKST = toZonedTime(createdAt, timeZone) // UTC 시간을 KST로 변환
-  const formattedDate = format(createdAtKST, 'yyyy-MM-dd HH:mm:ss') // 원하는 형식으로 포맷팅
+  const formattedDate = useMemo(() => {
+    const timeZone = 'Asia/Seoul'
+    const createdAt = parseISO(item.created_at)
+    const createdAtKST = toZonedTime(createdAt, timeZone)
+    return format(createdAtKST, 'yyyy-MM-dd HH:mm:ss')
+  }, [item.created_at])
 
-  const handleTooltipVisible = useCallback(() => {
-    setIsTooltipVisible(!isTooltipVisible)
-  }, [isTooltipVisible])
+  const handleTooltipVisible = () => {
+    setIsTooltipVisible(prev => !prev)
+  }
+
+  const closeTooltip = useCallback(() => {
+    setIsTooltipVisible(false)
+  }, [])
 
   const handlePositiveButton = useCallback(() => {
     onClickPositiveButton?.()
-    setIsTooltipVisible(false)
-  }, [onClickPositiveButton])
+    closeTooltip()
+  }, [onClickPositiveButton, closeTooltip])
 
   const handleNegativeButton = useCallback(() => {
     onClickNegativeButton?.()
-    setIsTooltipVisible(false)
-  }, [onClickNegativeButton])
+    closeTooltip()
+  }, [onClickNegativeButton, closeTooltip])
 
   return (
     <div>
-      <div className="relative flex flex-row justify-between items-center">
+      <div className="relative flex justify-between items-center">
         <Link
-          className={`block mt-2 ${isDisabled && 'cursor-default'}`}
+          className={twMerge('block mt-2', isDisabled && 'cursor-default')}
           href={isDisabled ? '' : `/BlogDetail/${item.post_id}`}
           onClick={event => isDisabled && event.preventDefault()}>
           <div
-            className={`group py-3 px-3 rounded-xl transition-colors ${!isDisabled && 'hover:bg-n-3/75'}`}>
+            className={twMerge(
+              'group py-3 px-3 rounded-xl transition-colors',
+              !isDisabled && 'hover:bg-n-3/75',
+            )}>
             <div className="truncate base1 font-semibold text-n-6">
               {item.username}
             </div>

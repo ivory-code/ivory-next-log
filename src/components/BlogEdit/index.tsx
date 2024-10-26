@@ -18,7 +18,9 @@ import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
 import {type BlogData} from '@/templates/BlogPage'
 
-import type React from 'react'
+import type {ChangeEvent} from 'react'
+
+const supabase = createBrowserClient()
 
 const BlogEdit = ({
   blogData,
@@ -31,56 +33,51 @@ const BlogEdit = ({
 }) => {
   const router = useRouter()
   const user = useUser(state => state.user)
-  const supabase = createBrowserClient()
 
   const [formData, setFormData] = useState({
     title: blogData?.title ?? '',
-    imageUrl: blogData?.titleImageUrl ?? '', // 메인 이미지 URL
-    content: blogData?.content ?? '', // 본문 내용
+    imageUrl: blogData?.titleImageUrl ?? '',
+    content: blogData?.content ?? '',
   })
   const [htmlContent, setHtmlContent] = useState('')
-  const [mainImageFile, setMainImageFile] = useState<File | null>(null) // 메인 이미지 파일
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 업로드한 본문 이미지 URL 리스트
+  const [mainImageFile, setMainImageFile] = useState<File | null>(null)
+  const [uploadedImages, setUploadedImages] = useState<string[]>([])
 
-  // 메인 이미지 처리
-  const handleMainImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleMainImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0]
       setMainImageFile(file)
-
-      // 메인 이미지 미리보기 URL 생성
-      const previewUrl = URL.createObjectURL(file)
-      setFormData(prev => ({...prev, imageUrl: previewUrl}))
+      setFormData(prev => ({...prev, imageUrl: URL.createObjectURL(file)}))
     }
   }
 
-  // 본문 이미지 업로드 처리
+  const uploadImage = async (file: File) => {
+    const {error} = await supabase.storage
+      .from('images')
+      .upload(file.name, file, {
+        cacheControl: '0',
+        upsert: true,
+      })
+
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error uploading image:', error)
+      return null
+    }
+
+    const {data: publicUrlData} = supabase.storage
+      .from('images')
+      .getPublicUrl(file.name)
+    return publicUrlData.publicUrl || ''
+  }
+
   const handleContentImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files) {
       const file = event.target.files[0]
-      const {data, error} = await supabase.storage
-        .from('images')
-        .upload(file.name, file, {
-          cacheControl: '0',
-          upsert: true,
-        })
-
-      if (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error uploading image:', error)
-        return
-      }
-
-      if (data) {
-        const {data: publicUrlData} = supabase.storage
-          .from('images')
-          .getPublicUrl(file.name)
-        const imageUrl = publicUrlData.publicUrl || ''
-
+      const imageUrl = await uploadImage(file)
+      if (imageUrl) {
         setFormData(prev => ({
           ...prev,
           content: prev.content + `\n![이미지 설명](${imageUrl})\n`,
@@ -90,65 +87,39 @@ const BlogEdit = ({
     }
   }
 
-  // 마크다운을 HTML로 변환
   const convertMarkdownToHtml = useCallback(async (markdownBody: string) => {
     const processedContent = await remark().use(html).process(markdownBody)
     setHtmlContent(processedContent.toString())
   }, [])
 
-  // 블로그 저장 처리
   const handleEdit = async () => {
-    if (!formData.title) {
-      return alert('제목을 입력해주세요.')
-    }
-
-    if (!formData.content) {
-      return alert('내용을 입력해주세요.')
+    if (!formData.title || !formData.content) {
+      return alert('제목과 내용을 입력해주세요.')
     }
 
     let updatedImageUrl = formData.imageUrl
 
-    // 메인 이미지가 있으면 업로드
     if (mainImageFile) {
-      const {data, error} = await supabase.storage
-        .from('images')
-        .upload(mainImageFile.name, mainImageFile, {
-          cacheControl: '0',
-          upsert: true,
-        })
-
-      if (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error uploading image:', error)
-        return
-      }
-
-      if (data) {
-        const {data: publicUrlData} = supabase.storage
-          .from('images')
-          .getPublicUrl(mainImageFile.name)
-        updatedImageUrl = publicUrlData.publicUrl || ''
-      }
+      const imageUrl = await uploadImage(mainImageFile)
+      if (imageUrl) updatedImageUrl = imageUrl
     }
 
     const blogPayload = {
       title: formData.title,
       content: formData.content,
-      imageUrl: updatedImageUrl, // 메인 이미지 URL
+      imageUrl: updatedImageUrl,
     }
 
     if (blogData) {
       await editBlog({id: blogData.id, ...blogPayload})
       refreshBlogs?.()
       onClose?.()
-      return
+    } else {
+      await createBlog({id: user?.id ?? '', ...blogPayload})
+      router.push('/Blog')
     }
-
-    await createBlog({id: user?.id ?? '', ...blogPayload})
-    router.push(`/Blog`)
   }
 
-  // 본문 미리보기 업데이트
   useEffect(() => {
     convertMarkdownToHtml(formData.content)
   }, [formData.content, convertMarkdownToHtml])
@@ -188,14 +159,11 @@ const BlogEdit = ({
         imageUrl={formData.imageUrl}
       />
 
-      {/* 본문 이미지 업로드 */}
       <ImageUpload
         label="본문 이미지 추가"
         onImageChange={handleContentImageUpload}
-        imageUrl={null}
       />
 
-      {/* 업로드된 이미지 목록 */}
       {uploadedImages.length > 0 && (
         <div className="mb-4">
           <ul className="flex flex-row">
@@ -214,7 +182,6 @@ const BlogEdit = ({
         </div>
       )}
 
-      {/* 본문 내용 입력 */}
       <div>
         <h2 className="text-xl font-bold mb-2">내용</h2>
         <Textarea
@@ -226,7 +193,6 @@ const BlogEdit = ({
         />
       </div>
 
-      {/* 본문 미리보기 */}
       <div className="flex-1 flex flex-col overflow-auto mt-4">
         <h2 className="text-xl font-bold mb-2">미리보기</h2>
         <MarkdownView

@@ -1,13 +1,18 @@
-import {type ReactNode} from 'react'
+import {type ReactNode, type MouseEvent} from 'react'
 
 interface Props {
   type?: 'submit' | 'reset' | 'button'
   className?: string
-  onClick?: (event: React.FormEvent) => void | Promise<void>
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void | Promise<void>
   children: ReactNode
 }
 
-const Button = ({className, onClick, type = 'button', children}: Props) => {
+const Button = ({
+  className = '',
+  onClick,
+  type = 'button',
+  children,
+}: Props) => {
   return (
     <button
       className={`btn-dark btn-small ${className}`}

@@ -2,17 +2,26 @@
 
 import {default as NextImage, type ImageProps} from 'next/image'
 import {useState} from 'react'
+import {twMerge} from 'tailwind-merge'
 
-const Image = ({className, ...props}: ImageProps) => {
+const Image = ({className = '', sizes = '500px', ...props}: ImageProps) => {
   const [loaded, setLoaded] = useState(false)
+
+  const handleLoad = () => {
+    if (typeof window !== 'undefined') {
+      setLoaded(true)
+    }
+  }
 
   return (
     <NextImage
-      className={`inline-block align-top opacity-0 transition-opacity ${
-        loaded && 'opacity-100'
-      } ${className}`}
-      onLoad={() => setLoaded(true)}
-      sizes="500px"
+      className={twMerge(
+        'inline-block align-top transition-opacity',
+        loaded ? 'opacity-100' : 'opacity-0',
+        className,
+      )}
+      onLoad={handleLoad}
+      sizes={sizes}
       {...props}
     />
   )

@@ -13,23 +13,20 @@ const LoginForm = ({className}: Props) => {
   const setUser = useUser(state => state.setUser)
 
   const supabase = createBrowserClient()
-
   const isLogin = user !== null
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
-    if (user) {
-      supabase.auth.signOut()
+    if (isLogin) {
+      await supabase.auth.signOut()
       setUser(null)
+
       return
     }
-
-    supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: 'github',
-      options: {
-        redirectTo: location.origin,
-      },
+      options: {redirectTo: location.origin},
     })
   }
 
@@ -38,10 +35,10 @@ const LoginForm = ({className}: Props) => {
       <Profile
         position="right"
         isLogin={isLogin}
-        nickname={user?.nickname ?? ''}
+        nickname={user?.nickname || ''}
       />
       <Button type="submit">
-        <Typography text={user ? 'Logout' : 'Login'} className="base2" />
+        <Typography text={isLogin ? 'Logout' : 'Login'} className="base2" />
       </Button>
     </form>
   )

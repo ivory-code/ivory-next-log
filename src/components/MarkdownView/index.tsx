@@ -1,3 +1,5 @@
+import {twMerge} from 'tailwind-merge'
+
 interface Props {
   content: string
   className?: string
@@ -6,8 +8,10 @@ interface Props {
 const MarkdownView = ({content, className}: Props) => {
   return (
     <div
-      className={`${className}`}
-      dangerouslySetInnerHTML={{__html: content.replace(/\n/g, '<br />')}}
+      className={twMerge(className)}
+      dangerouslySetInnerHTML={{
+        __html: content.replace(/\n/g, '<br />'),
+      }}
     />
   )
 }
