@@ -7,15 +7,15 @@ import Layout from '@/components/Layout'
 import {createBrowserClient} from '@/supabase/client'
 import {type Database} from '@/supabase/database.types'
 
+export type BlogData = Database['public']['Tables']['posts']['Row']
+
 const INITIAL_PAGE_COUNT = 6 // 처음에 불러올 데이터 수
 const LOAD_MORE_COUNT = 2 // 추가로 불러올 데이터 수
 
 const BlogPage = () => {
   const supabase = createBrowserClient()
 
-  const [blogsData, setBlogsData] = useState<
-    Database['public']['Tables']['posts']['Row'][]
-  >([])
+  const [blogsData, setBlogsData] = useState<BlogData[]>([])
   const [isLoading, setIsLoading] = useState(false) // 로딩 상태
   const [hasMore, setHasMore] = useState(true) // 더 불러올 데이터가 있는지 여부
   const [page, setPage] = useState(1) // 페이지 번호
@@ -24,8 +24,8 @@ const BlogPage = () => {
 
   // 중복 데이터 필터링 함수
   const filterDuplicateBlogs = (
-    newBlogs: Database['public']['Tables']['posts']['Row'][],
-    existingBlogs: Database['public']['Tables']['posts']['Row'][],
+    newBlogs: BlogData[],
+    existingBlogs: BlogData[],
   ) => {
     return newBlogs.filter(
       blog => !existingBlogs.some(existingBlog => existingBlog.id === blog.id),

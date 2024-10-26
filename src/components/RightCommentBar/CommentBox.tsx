@@ -10,10 +10,12 @@ import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {type Database} from '@/supabase/database.types'
 
+export type CommentData = Database['public']['Tables']['comments']['Row']
+
 interface Props {
   isDisabled?: boolean
   isTooltipVisible?: boolean
-  item: Database['public']['Tables']['comments']['Row']
+  item: CommentData
   onClickPositiveButton?: () => void
   onClickNegativeButton?: () => void | Promise<void>
 }

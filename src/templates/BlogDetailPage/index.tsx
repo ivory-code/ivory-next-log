@@ -17,7 +17,7 @@ import Layout from '@/components/Layout'
 import MarkdownView from '@/components/MarkdownView'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
-import {type Database} from '@/supabase/database.types'
+import {type BlogData} from '@/templates/BlogPage'
 
 import type React from 'react'
 
@@ -25,9 +25,7 @@ const BlogDetailPage = () => {
   const params = useParams()
   const user = useUser(state => state.user)
 
-  const [blogDetailData, setBlogDetailData] = useState<
-    Database['public']['Tables']['posts']['Row'] | null
-  >(null)
+  const [blogDetailData, setBlogDetailData] = useState<BlogData | null>(null)
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [htmlContent, setHtmlContent] = useState('')
 

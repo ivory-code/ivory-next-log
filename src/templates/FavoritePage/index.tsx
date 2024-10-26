@@ -9,13 +9,13 @@ import Layout from '@/components/Layout'
 import {useUser} from '@/store/user'
 import {type Database} from '@/supabase/database.types'
 
+export type FavoriteData = Database['public']['Tables']['favorites']['Row']
+
 const FavoritePage = () => {
   const router = useRouter()
   const user = useUser(state => state.user)
 
-  const [favoritesData, setFavoritesData] = useState<
-    Database['public']['Tables']['favorites']['Row'][]
-  >([])
+  const [favoritesData, setFavoritesData] = useState<FavoriteData[]>([])
 
   const handleRouter = useCallback(
     (id: string) => {

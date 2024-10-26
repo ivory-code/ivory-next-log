@@ -6,8 +6,8 @@ import {createComment} from '@/app/api/createComment'
 import {deleteComment} from '@/app/api/deleteComment'
 import LeftSideBar from '@/components/LeftSideBar'
 import RightCommentBar from '@/components/RightCommentBar'
+import {type CommentData} from '@/components/RightCommentBar/CommentBox'
 import {useUser} from '@/store/user'
-import {type Database} from '@/supabase/database.types'
 
 interface Props {
   children: React.ReactNode
@@ -22,12 +22,8 @@ const Layout = ({children, isMainView = false}: Props) => {
 
   const [isSideBarVisible, setIsSideBarVisible] = useState(false)
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(true)
-  const [commentsData, setCommentsData] = useState<
-    Database['public']['Tables']['comments']['Row'][] | []
-  >([])
-  const [blogCommentData, setBlogCommentData] = useState<
-    Database['public']['Tables']['comments']['Row'][] | []
-  >([])
+  const [commentsData, setCommentsData] = useState<CommentData[] | []>([])
+  const [blogCommentData, setBlogCommentData] = useState<CommentData[] | []>([])
 
   const isBlogDetailPage = pathname.includes('Blog') && params.id !== undefined
 

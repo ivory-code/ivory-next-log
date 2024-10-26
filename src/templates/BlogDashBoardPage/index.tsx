@@ -15,7 +15,7 @@ import Modal from '@/components/Modal'
 import TooltipModal from '@/components/TooltipModal'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
-import {type Database} from '@/supabase/database.types'
+import {type BlogData} from '@/templates/BlogPage'
 
 const BlogDashBoardPage = () => {
   const user = useUser(state => state.user)
@@ -23,24 +23,17 @@ const BlogDashBoardPage = () => {
   const [isEditProfileVisible, setIsEditProfileVisible] = useState(false)
   const [isBlogDetailVisible, setIsBlogDetailVisible] = useState(false)
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
-  const [blogsData, setBlogsData] = useState<
-    Database['public']['Tables']['posts']['Row'][]
-  >([])
-  const [selectedBlog, setSelectedBlog] = useState<
-    Database['public']['Tables']['posts']['Row'] | null
-  >(null)
+  const [blogsData, setBlogsData] = useState<BlogData[]>([])
+  const [selectedBlog, setSelectedBlog] = useState<BlogData | null>(null)
 
   const handleEditProfile = useCallback(() => {
     setIsEditProfileVisible(!isEditProfileVisible)
   }, [isEditProfileVisible])
 
-  const handleBlogDetail = useCallback(
-    (blog: Database['public']['Tables']['posts']['Row']) => {
-      setSelectedBlog(blog)
-      setIsBlogDetailVisible(true)
-    },
-    [],
-  )
+  const handleBlogDetail = useCallback((blog: BlogData) => {
+    setSelectedBlog(blog)
+    setIsBlogDetailVisible(true)
+  }, [])
 
   const closeBlogDetailModal = useCallback(() => {
     setIsBlogDetailVisible(false)

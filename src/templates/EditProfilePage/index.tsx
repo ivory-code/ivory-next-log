@@ -15,6 +15,8 @@ import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
 import {type Database} from '@/supabase/database.types'
 
+export type ProfileData = Database['public']['Tables']['profile']['Row']
+
 const SKILLS = [
   {name: 'javascript', bg: 'bg-accent-6'},
   {name: 'react', bg: 'bg-accent-7'},
@@ -33,8 +35,7 @@ const EditProfilePage = () => {
   const user = useUser(state => state.user)
   const supabase = createBrowserClient()
 
-  const [profileData, setProfileData] =
-    useState<Database['public']['Tables']['profile']['Row']>()
+  const [profileData, setProfileData] = useState<ProfileData>()
 
   const [formState, setFormState] = useState({
     mainTitle: '',

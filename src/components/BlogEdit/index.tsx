@@ -16,7 +16,7 @@ import Textarea from '@/components/Textarea'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
-import {type Database} from '@/supabase/database.types'
+import {type BlogData} from '@/templates/BlogPage'
 
 import type React from 'react'
 
@@ -25,7 +25,7 @@ const BlogEdit = ({
   onClose,
   refreshBlogs,
 }: {
-  blogData?: Database['public']['Tables']['posts']['Row']
+  blogData?: BlogData
   onClose?: () => void
   refreshBlogs?: () => void
 }) => {

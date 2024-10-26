@@ -8,7 +8,7 @@ import Icon, {type IconName} from '@/components/Icon'
 import Layout from '@/components/Layout'
 import LoginForm from '@/components/LoginForm'
 import Typography from '@/components/Typography'
-import {type Database} from '@/supabase/database.types'
+import {type ProfileData} from '@/templates/EditProfilePage'
 
 interface IconProps {
   name: IconName
@@ -31,8 +31,7 @@ const IconRow = ({icons, title}: {icons: IconProps[]; title: string}) => (
 )
 
 const MainPage = () => {
-  const [profileData, setProfileData] =
-    useState<Database['public']['Tables']['profile']['Row']>()
+  const [profileData, setProfileData] = useState<ProfileData>()
 
   useEffect(() => {
     async function fetchProfileData() {

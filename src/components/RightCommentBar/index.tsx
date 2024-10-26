@@ -3,12 +3,13 @@ import {twMerge} from 'tailwind-merge'
 
 import CommentInput from '@/components/CommentInput'
 import LoginForm from '@/components/LoginForm'
-import CommentBox from '@/components/RightCommentBar/CommentBox'
+import CommentBox, {
+  type CommentData,
+} from '@/components/RightCommentBar/CommentBox'
 import {type User} from '@/store/user'
-import {type Database} from '@/supabase/database.types'
 
 interface Props {
-  data: Database['public']['Tables']['comments']['Row'][] | []
+  data: CommentData[] | []
   user: User | null
   className?: string
   createComment?: ({

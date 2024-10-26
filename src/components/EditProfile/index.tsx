@@ -12,7 +12,7 @@ import Textarea from '@/components/Textarea'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
-import {type Database} from '@/supabase/database.types'
+import {type ProfileData} from '@/templates/EditProfilePage'
 
 const SKILLS = [
   {name: 'javascript', bg: 'bg-accent-6'},
@@ -32,8 +32,7 @@ const EditProfile = () => {
   const user = useUser(state => state.user)
   const supabase = createBrowserClient()
 
-  const [profileData, setProfileData] =
-    useState<Database['public']['Tables']['profile']['Row']>()
+  const [profileData, setProfileData] = useState<ProfileData>()
 
   const [mainTitle, setMainTitle] = useState('')
   const [subTitle, setSubTitle] = useState('')
@@ -62,7 +61,7 @@ const EditProfile = () => {
   const fetchProfileData = useCallback(async () => {
     try {
       const res = await axios(`/api/EditProfile`)
-      const data = await res.data.profileData[0]
+      const data: ProfileData = await res.data.profileData[0]
       setProfileData(data)
     } catch (error) {
       // eslint-disable-next-line no-console
