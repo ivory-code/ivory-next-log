@@ -4,6 +4,7 @@ import React, {useEffect, useState, useRef, useCallback} from 'react'
 
 import BlogCard from '@/components/BlogCard'
 import Layout from '@/components/Layout'
+import Typography from '@/components/Typography'
 import {createBrowserClient} from '@/supabase/client'
 import {type Database} from '@/supabase/database.types'
 
@@ -125,7 +126,7 @@ const BlogPage = () => {
         ))}
       </div>
       <div ref={observerRef} className="h-10" /> {/* 감지할 빈 요소 */}
-      {isLoading && <div>Loading...</div>} {/* 로딩 상태 표시 */}
+      {isLoading && <Typography text="Loading..." />} {/* 로딩 상태 표시 */}
     </Layout>
   )
 }

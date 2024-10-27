@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 import {useParams} from 'next/navigation'
-import {Suspense, useCallback, useEffect, useState} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 import {remark} from 'remark'
 import html from 'remark-html'
 import {twMerge} from 'tailwind-merge'
@@ -19,8 +19,6 @@ import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {type BlogData} from '@/templates/BlogPage'
 
-import type React from 'react'
-
 const BlogDetailPage = () => {
   const params = useParams()
   const user = useUser(state => state.user)
@@ -29,61 +27,65 @@ const BlogDetailPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [htmlContent, setHtmlContent] = useState('')
 
+  const blogId = `${params.id}`
+
   const convertMarkdownToHtml = useCallback(async (markdownBody: string) => {
     const processedContent = await remark().use(html).process(markdownBody)
     setHtmlContent(processedContent.toString())
   }, [])
 
   const fetchBlogDetailData = useCallback(async () => {
-    const res = await axios(`/api/BlogDetail?id=${params.id}`)
-    const data = await res.data
-
-    setBlogDetailData(data.post)
-  }, [params.id])
+    if (blogId) {
+      try {
+        const {data} = await axios.get(`/api/BlogDetail?id=${blogId}`)
+        setBlogDetailData(data.post)
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to fetch blog detail:', error)
+      }
+    }
+  }, [blogId])
 
   const fetchFavoriteData = useCallback(async () => {
-    if (params.id.length === 0) {
+    if (!blogId) {
       return
     }
 
-    const data = await getBlogFavorite({blogId: `${params.id}`})
+    const data = await getBlogFavorite({blogId: `${blogId}`})
 
-    if (data?.length !== 0) {
+    if (data) {
       setIsBookmarked(true)
     }
-  }, [params.id])
+  }, [blogId])
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault()
 
-      if (!user?.id || !blogDetailData?.title || params.id.length === 0) {
-        return
-      }
+      if (!user?.id || !blogDetailData?.title) return
 
       if (isBookmarked) {
-        await deleteFavorite({userId: user.id, blogId: `${params.id}`})
+        await deleteFavorite({userId: user.id, blogId})
         setIsBookmarked(false)
+
         return
       }
-
       await addFavorite({
         userId: user.id,
-        blogId: `${params.id}`,
+        blogId,
         blogTitle: blogDetailData.title,
       })
       setIsBookmarked(true)
     },
-    [blogDetailData?.title, isBookmarked, params.id, user?.id],
+    [user?.id, blogDetailData?.title, isBookmarked, blogId],
   )
 
   useEffect(() => {
-    if (params.id) {
-      void fetchBlogDetailData()
-
-      void fetchFavoriteData()
+    if (blogId) {
+      fetchBlogDetailData()
+      fetchFavoriteData()
     }
-  }, [fetchBlogDetailData, fetchFavoriteData, params.id])
+  }, [blogId, fetchBlogDetailData, fetchFavoriteData])
 
   useEffect(() => {
     if (blogDetailData?.content) {
@@ -93,46 +95,44 @@ const BlogDetailPage = () => {
 
   return (
     <Layout>
-      <Suspense fallback={<Typography text="Loading..." />}>
-        {blogDetailData ? (
-          <div>
-            {blogDetailData.titleImageUrl && (
-              <div className="relative w-full aspect-[2.4]">
-                <Image
-                  className="rounded-xl object-cover"
-                  src={blogDetailData.titleImageUrl}
-                  fill
-                  alt="blogDetailImage"
-                  priority
-                />
-              </div>
-            )}
-            <div>
-              <div className="flex justify-between items-center">
-                <Typography
-                  text={blogDetailData.title}
-                  className="mt-4 h3 leading-[4rem] 2xl:mb-2 2xl:h4 font-black"
-                />
-                <Button
-                  type="submit"
-                  onClick={handleSubmit}
-                  className={twMerge('btn-small hover:bg-accent-2')}>
-                  <Icon
-                    iconName={isBookmarked ? 'favoriteFilled' : 'favorite'}
-                    className="fill-accent-6 w-8 h-8"
-                  />
-                </Button>
-              </div>
-              <MarkdownView
-                content={htmlContent}
-                className="mt-4 body2 font-semibold text-n-6"
+      {blogDetailData ? (
+        <div>
+          {blogDetailData.titleImageUrl && (
+            <div className="relative w-full aspect-[2.4]">
+              <Image
+                className="rounded-xl object-cover"
+                src={blogDetailData.titleImageUrl}
+                fill
+                alt="blogDetailImage"
+                priority
               />
             </div>
+          )}
+          <div>
+            <div className="flex justify-between items-center">
+              <Typography
+                text={blogDetailData.title}
+                className="mt-4 h3 leading-[4rem] 2xl:mb-2 2xl:h4 font-black"
+              />
+              <Button
+                type="submit"
+                onClick={handleSubmit}
+                className={twMerge('btn-small hover:bg-accent-2')}>
+                <Icon
+                  iconName={isBookmarked ? 'favoriteFilled' : 'favorite'}
+                  className="fill-accent-6 w-8 h-8"
+                />
+              </Button>
+            </div>
+            <MarkdownView
+              content={htmlContent}
+              className="mt-4 body2 font-semibold text-n-6"
+            />
           </div>
-        ) : (
-          <Typography text="No blog data found." />
-        )}
-      </Suspense>
+        </div>
+      ) : (
+        <Typography text="Loading..." />
+      )}
     </Layout>
   )
 }

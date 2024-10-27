@@ -22,51 +22,51 @@ const BlogDashBoardPage = () => {
 
   const [isEditProfileVisible, setIsEditProfileVisible] = useState(false)
   const [isBlogDetailVisible, setIsBlogDetailVisible] = useState(false)
-  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const [blogsData, setBlogsData] = useState<BlogData[]>([])
   const [selectedBlog, setSelectedBlog] = useState<BlogData | null>(null)
+  const [tooltipVisibleId, setTooltipVisibleId] = useState<string | null>(null)
 
-  const handleEditProfile = useCallback(() => {
-    setIsEditProfileVisible(!isEditProfileVisible)
-  }, [isEditProfileVisible])
+  const handleEditProfile = () => {
+    setIsEditProfileVisible(prev => !prev)
+  }
 
-  const handleBlogDetail = useCallback((blog: BlogData) => {
+  const closeBlogDetailModal = () => {
+    setIsBlogDetailVisible(false)
+  }
+
+  const handleBlogDetail = (blog: BlogData) => {
     setSelectedBlog(blog)
     setIsBlogDetailVisible(true)
-  }, [])
+  }
 
-  const closeBlogDetailModal = useCallback(() => {
-    setIsBlogDetailVisible(false)
-  }, [])
-
-  const fetchBlogsData = useCallback(async () => {
-    const res = await axios(`/api/BlogDashBoard`)
-    const data = await res.data.blogsData
-
-    setBlogsData(data)
-  }, [])
-
-  const handleTooltipVisible = useCallback(() => {
-    setIsTooltipVisible(!isTooltipVisible)
-  }, [isTooltipVisible])
+  const fetchBlogsData = async () => {
+    try {
+      const res = await axios.get(`/api/BlogDashBoard`)
+      setBlogsData(res.data.blogsData)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to fetch blogs data:', error)
+    }
+  }
 
   const handleDeleteBlog = useCallback(
     async (blogId: string) => {
-      await deleteBlog({
-        userId: user?.id ?? '',
-        blogId,
-        role: user?.role ?? '',
-      })
+      if (!user) return
 
+      await deleteBlog({
+        userId: user.id,
+        blogId,
+        role: user.role,
+      })
       setBlogsData(prevData => prevData.filter(blog => blog.id !== blogId))
-      setIsTooltipVisible(false)
+      setTooltipVisibleId(null)
     },
-    [user?.id, user?.role],
+    [user],
   )
 
   useEffect(() => {
-    void fetchBlogsData()
-  }, [fetchBlogsData])
+    fetchBlogsData()
+  }, [])
 
   return (
     <div>
@@ -80,37 +80,34 @@ const BlogDashBoardPage = () => {
               iconName="blog"
               fill="fill-accent-3"
             />
-            <Typography text="홈 추가/수정" className="base2 " />
+            <Typography text="홈 추가/수정" className="base2" />
           </div>
         </Button>
-        {blogsData.length > 0
-          ? blogsData.map(data => (
-              <div
-                key={`${data.id}`}
-                className="flex justify-between items-center">
-                <BlogList
-                  onClick={() => handleBlogDetail(data)}
-                  title={data.title}
-                  isAdmin
-                />
-                <IconButton
-                  buttonClassName="ml-4 fill-accent-1 transition-colors items-center bg-transparent"
-                  iconName="delete"
-                  onClick={handleTooltipVisible}
-                />
-                <TooltipModal
-                  isModalVisible={isTooltipVisible}
-                  title="게시글을 삭제하시겠습니까?">
-                  <Button onClick={() => handleDeleteBlog(data.id)}>
-                    <Typography text="예" />
-                  </Button>
-                  <Button onClick={handleTooltipVisible}>
-                    <Typography text="아니오" />
-                  </Button>
-                </TooltipModal>
-              </div>
-            ))
-          : null}
+        {blogsData.length > 0 &&
+          blogsData.map(data => (
+            <div key={data.id} className="flex justify-between items-center">
+              <BlogList
+                onClick={() => handleBlogDetail(data)}
+                title={data.title}
+                isAdmin
+              />
+              <IconButton
+                buttonClassName="ml-4 fill-accent-1 transition-colors items-center bg-transparent"
+                iconName="delete"
+                onClick={() => setTooltipVisibleId(data.id)}
+              />
+              <TooltipModal
+                isModalVisible={tooltipVisibleId === data.id}
+                title="게시글을 삭제하시겠습니까?">
+                <Button onClick={() => handleDeleteBlog(data.id)}>
+                  <Typography text="예" />
+                </Button>
+                <Button onClick={() => setTooltipVisibleId(null)}>
+                  <Typography text="아니오" />
+                </Button>
+              </TooltipModal>
+            </div>
+          ))}
       </Layout>
       <Modal
         classWrap="max-w-[48rem] md:min-h-screen-ios md:rounded-none"
@@ -123,13 +120,11 @@ const BlogDashBoardPage = () => {
           classWrap="max-w-[48rem] md:min-h-screen-ios md:rounded-none"
           isVisible={isBlogDetailVisible}
           onClose={closeBlogDetailModal}>
-          {selectedBlog && (
-            <BlogEdit
-              blogData={selectedBlog}
-              onClose={() => setIsBlogDetailVisible(false)}
-              refreshBlogs={fetchBlogsData}
-            />
-          )}
+          <BlogEdit
+            blogData={selectedBlog}
+            onClose={closeBlogDetailModal}
+            refreshBlogs={fetchBlogsData}
+          />
         </Modal>
       )}
     </div>

@@ -13,7 +13,7 @@ import Textarea from '@/components/Textarea'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
-import {type ProfileData} from '@/templates/EditProfilePage'
+import {type ProfileData} from '@/templates/MainPage'
 
 const supabase = createBrowserClient()
 

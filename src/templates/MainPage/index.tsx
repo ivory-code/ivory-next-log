@@ -2,51 +2,34 @@
 
 import axios from 'axios'
 import Image from 'next/image'
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 
-import Icon, {type IconName} from '@/components/Icon'
+import IconRow, {type IconRowProps} from '@/components/IconRow'
 import Layout from '@/components/Layout'
 import LoginForm from '@/components/LoginForm'
 import Typography from '@/components/Typography'
-import {type ProfileData} from '@/templates/EditProfilePage'
+import {type Database} from '@/supabase/database.types'
 
-interface IconProps {
-  name: IconName
-  bg: string
-}
-
-const IconRow = ({icons, title}: {icons: IconProps[]; title: string}) => (
-  <div className="mt-6">
-    <Typography text={title} className="base2" />
-    <div className="flex justify-start gap-x-5">
-      {icons.map(icon => (
-        <div
-          key={icon.name}
-          className={`w-12 h-12 rounded ${icon.bg} flex justify-center items-center`}>
-          <Icon iconName={icon.name} />
-        </div>
-      ))}
-    </div>
-  </div>
-)
+export type ProfileData = Database['public']['Tables']['profile']['Row']
 
 const MainPage = () => {
-  const [profileData, setProfileData] = useState<ProfileData>()
+  const [profileData, setProfileData] = useState<ProfileData | null>(null)
+
+  const fetchProfileData = useCallback(async () => {
+    try {
+      const {data} = await axios.get<{profileData: ProfileData[]}>(
+        '/api/EditProfile',
+      )
+      setProfileData(data.profileData[0] || null)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching profile data:', error)
+    }
+  }, [])
 
   useEffect(() => {
-    async function fetchProfileData() {
-      try {
-        const res = await axios(`/api/EditProfile`)
-        const data = await res.data.profileData[0]
-
-        setProfileData(data)
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching profile data:', error)
-      }
-    }
     fetchProfileData()
-  }, [])
+  }, [fetchProfileData])
 
   return (
     <div>
@@ -68,13 +51,13 @@ const MainPage = () => {
             />
             {profileData?.skills && (
               <IconRow
-                icons={profileData.skills as unknown as IconProps[]}
+                icons={profileData.skills as unknown as IconRowProps[]}
                 title="Skills"
               />
             )}
             {profileData?.tools && (
               <IconRow
-                icons={profileData.tools as unknown as IconProps[]}
+                icons={profileData.tools as unknown as IconRowProps[]}
                 title="Tools"
               />
             )}

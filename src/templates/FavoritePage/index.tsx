@@ -6,6 +6,7 @@ import React, {useCallback, useEffect, useState} from 'react'
 import {getBlogsFavorites} from '@/app/api/getFavorite'
 import BlogList from '@/components/BlogList'
 import Layout from '@/components/Layout'
+import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {type Database} from '@/supabase/database.types'
 
@@ -25,34 +26,33 @@ const FavoritePage = () => {
   )
 
   const fetchFavoritesData = useCallback(async () => {
-    if (!user?.id) {
-      return
+    if (user?.id) {
+      const data = await getBlogsFavorites({userId: user.id})
+      setFavoritesData(data ?? [])
     }
-
-    const data = await getBlogsFavorites({userId: user.id})
-
-    setFavoritesData(data ?? [])
   }, [user?.id])
 
   useEffect(() => {
-    void fetchFavoritesData()
-  }, [fetchFavoritesData])
+    if (user?.id) {
+      void fetchFavoritesData()
+    }
+  }, [fetchFavoritesData, user?.id])
 
   return (
     <div>
       <Layout>
-        {favoritesData.length > 0
-          ? favoritesData.map(data => (
-              <div
-                key={`${data.id}`}
-                className="flex justify-center items-center">
-                <BlogList
-                  onClick={() => handleRouter(data.post_id ?? '')}
-                  title={data.post_title}
-                />
-              </div>
-            ))
-          : null}
+        {favoritesData.length > 0 ? (
+          favoritesData.map(data => (
+            <div key={data.id} className="flex justify-center items-center">
+              <BlogList
+                onClick={() => handleRouter(data.post_id ?? '')}
+                title={data.post_title}
+              />
+            </div>
+          ))
+        ) : (
+          <Typography text="No favorites found." />
+        )}
       </Layout>
     </div>
   )
