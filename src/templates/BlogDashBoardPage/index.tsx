@@ -120,11 +120,7 @@ const BlogDashBoardPage = () => {
           classWrap="max-w-[48rem] md:min-h-screen-ios md:rounded-none"
           isVisible={isBlogDetailVisible}
           onClose={closeBlogDetailModal}>
-          <BlogEdit
-            blogData={selectedBlog}
-            onClose={closeBlogDetailModal}
-            refreshBlogs={fetchBlogsData}
-          />
+          <BlogEdit blogData={selectedBlog} refreshBlogs={fetchBlogsData} />
         </Modal>
       )}
     </div>

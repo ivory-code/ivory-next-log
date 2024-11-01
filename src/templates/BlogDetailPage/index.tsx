@@ -53,7 +53,7 @@ const BlogDetailPage = () => {
 
     const data = await getBlogFavorite({blogId: `${blogId}`})
 
-    if (data) {
+    if (data?.length) {
       setIsBookmarked(true)
     }
   }, [blogId])

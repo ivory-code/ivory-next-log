@@ -1,18 +1,14 @@
 'use client'
 
+import MDEditor from '@uiw/react-md-editor'
 import {useRouter} from 'next/navigation'
-import {useEffect, useState, useCallback} from 'react'
-import {remark} from 'remark'
-import html from 'remark-html'
+import {useEffect, useState} from 'react'
 
 import {createBlog} from '@/app/api/createBlog'
 import {editBlog} from '@/app/api/editBlog'
 import Button from '@/components/Button'
-import Image from '@/components/Image'
 import ImageUpload from '@/components/ImageUpload'
 import InputField from '@/components/InputField'
-import MarkdownView from '@/components/MarkdownView'
-import Textarea from '@/components/Textarea'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
@@ -24,11 +20,9 @@ const supabase = createBrowserClient()
 
 const BlogEdit = ({
   blogData,
-  onClose,
   refreshBlogs,
 }: {
   blogData?: BlogData
-  onClose?: () => void
   refreshBlogs?: () => void
 }) => {
   const router = useRouter()
@@ -39,9 +33,7 @@ const BlogEdit = ({
     imageUrl: blogData?.titleImageUrl ?? '',
     content: blogData?.content ?? '',
   })
-  const [htmlContent, setHtmlContent] = useState('')
   const [mainImageFile, setMainImageFile] = useState<File | null>(null)
-  const [uploadedImages, setUploadedImages] = useState<string[]>([])
 
   const handleMainImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -71,27 +63,6 @@ const BlogEdit = ({
     return publicUrlData.publicUrl || ''
   }
 
-  const handleContentImageUpload = async (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    if (event.target.files) {
-      const file = event.target.files[0]
-      const imageUrl = await uploadImage(file)
-      if (imageUrl) {
-        setFormData(prev => ({
-          ...prev,
-          content: prev.content + `\n![이미지 설명](${imageUrl})\n`,
-        }))
-        setUploadedImages(prev => [...prev, imageUrl])
-      }
-    }
-  }
-
-  const convertMarkdownToHtml = useCallback(async (markdownBody: string) => {
-    const processedContent = await remark().use(html).process(markdownBody)
-    setHtmlContent(processedContent.toString())
-  }, [])
-
   const handleEdit = async () => {
     if (!formData.title || !formData.content) {
       return alert('제목과 내용을 입력해주세요.')
@@ -113,16 +84,35 @@ const BlogEdit = ({
     if (blogData) {
       await editBlog({id: blogData.id, ...blogPayload})
       refreshBlogs?.()
-      onClose?.()
     } else {
       await createBlog({id: user?.id ?? '', ...blogPayload})
       router.push('/Blog')
     }
   }
 
-  useEffect(() => {
-    convertMarkdownToHtml(formData.content)
-  }, [formData.content, convertMarkdownToHtml])
+  const handleDrop = async (event: React.DragEvent) => {
+    event.preventDefault()
+    const files = event.dataTransfer.files
+
+    if (files.length > 0) {
+      const file = files[0]
+
+      // 파일명에 한글이 포함되어 있는지 확인
+      if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(file.name)) {
+        alert('파일명에 한글이 포함되어 있습니다. 영문 파일명을 사용해 주세요.')
+        return
+      }
+
+      const imageUrl = await uploadImage(file)
+      if (imageUrl) {
+        const markdownImageSyntax = `![이미지 설명](${imageUrl})`
+        setFormData(prev => ({
+          ...prev,
+          content: prev.content + `\n${markdownImageSyntax}\n`,
+        }))
+      }
+    }
+  }
 
   useEffect(() => {
     if (blogData) {
@@ -159,46 +149,23 @@ const BlogEdit = ({
         imageUrl={formData.imageUrl}
       />
 
-      <ImageUpload
-        label="본문 이미지 추가"
-        onImageChange={handleContentImageUpload}
-      />
-
-      {uploadedImages.length > 0 && (
-        <div className="mb-4">
-          <ul className="flex flex-row">
-            {uploadedImages.map((imageUrl, index) => (
-              <li key={index} className="mb-2">
-                <Image
-                  src={imageUrl}
-                  alt={`Uploaded Image ${index + 1}`}
-                  className="max-w-full h-auto rounded-md mr-4"
-                  width={140}
-                  height={115}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div>
+      <div className="flex flex-col mb-4">
         <h2 className="text-xl font-bold mb-2">내용</h2>
-        <Textarea
-          name="content"
-          value={formData.content}
-          placeholder="내용을 입력해주세요."
-          onChange={e => setFormData({...formData, content: e.target.value})}
-          className="w-full h-48 p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
-        />
-      </div>
-
-      <div className="flex-1 flex flex-col overflow-auto mt-4">
-        <h2 className="text-xl font-bold mb-2">미리보기</h2>
-        <MarkdownView
-          content={htmlContent}
-          className="flex-1 p-4 border border-gray-300 rounded-md shadow-sm bg-white"
-        />
+        <div
+          onDrop={handleDrop}
+          onDragOver={e => e.preventDefault()} // Allow dropping
+        >
+          <MDEditor
+            value={formData.content}
+            onChange={value => setFormData({...formData, content: value || ''})}
+            style={{
+              minHeight: '500px',
+            }}
+            height={500}
+            preview="live"
+            visibleDragbar
+          />
+        </div>
       </div>
     </div>
   )

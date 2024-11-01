@@ -1,5 +1,8 @@
+import DOMPurify from 'dompurify'
+import {marked} from 'marked'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
+import {useEffect, useState} from 'react'
 import {twMerge} from 'tailwind-merge'
 
 import Image from '@/components/Image'
@@ -15,6 +18,28 @@ interface Props {
 const BlogCard = ({id, title, imageUrl, content}: Props) => {
   const pathname = usePathname()
   const isBlogPage = pathname.includes('Blog')
+
+  const [sanitizedContent, setSanitizedContent] = useState('')
+
+  // 마크다운을 HTML로 변환하면서 이미지 태그를 제거하고 100자까지 잘라줍니다
+  const renderPreviewContent = async (markdown: string): Promise<string> => {
+    const html = await marked.parse(markdown) // Promise를 해제
+    const sanitizedHtml = DOMPurify.sanitize(html.replace(/<img[^>]*>/g, '')) // 이미지 태그 제거 후 정제
+    const previewText =
+      sanitizedHtml.length > 100
+        ? sanitizedHtml.slice(0, 100) + '...'
+        : sanitizedHtml // 100자 제한
+    return previewText
+  }
+
+  useEffect(() => {
+    const convertContent = async () => {
+      const htmlContent = await renderPreviewContent(content)
+      setSanitizedContent(htmlContent)
+    }
+
+    convertContent()
+  }, [content])
 
   return (
     <div className="w-full max-w-[30rem] mx-auto">
@@ -35,12 +60,12 @@ const BlogCard = ({id, title, imageUrl, content}: Props) => {
           )}
           text={title}
         />
-        <Typography
+        <div
           className={twMerge(
             'mt-4 body2 font-semibold text-n-6',
             isBlogPage && 'truncate',
           )}
-          text={content}
+          dangerouslySetInnerHTML={{__html: sanitizedContent}}
         />
         <div className="flex flex-wrap">
           <Link
