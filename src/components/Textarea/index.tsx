@@ -1,3 +1,4 @@
+import {type ChangeEvent} from 'react'
 import {twMerge} from 'tailwind-merge'
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
   defaultValue?: string
   className?: string
   placeholder?: string
-  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void
 }
 
 const Textarea = ({

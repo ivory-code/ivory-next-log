@@ -62,7 +62,7 @@ const CommentBox = ({
       <div className="relative flex justify-between items-center">
         <Link
           className={twMerge('block mt-2', isDisabled && 'cursor-default')}
-          href={isDisabled ? '' : `/BlogDetail/${item.post_id}`}
+          href={isDisabled ? '' : `/blogDetail/${item.post_id}`}
           onClick={event => isDisabled && event.preventDefault()}>
           <div
             className={twMerge(

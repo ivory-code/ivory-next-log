@@ -13,6 +13,7 @@ interface Props {
 
 const LeftNavigationSideBar = ({user, isLeftSideBarVisible = false}: Props) => {
   const isLogin = !!user
+  const isAdmin = user?.role === 'admin'
 
   const sideBarClass = twMerge(
     'fixed z-20 top-0 left-0 bottom-0 flex flex-col pt-30 px-4 bg-n-7 transition-opacity md:invisible md:opacity-0',
@@ -36,6 +37,7 @@ const LeftNavigationSideBar = ({user, isLeftSideBarVisible = false}: Props) => {
         <Navigation
           isSideBarVisible={isLeftSideBarVisible}
           items={NAVIGATION}
+          isAdmin={isAdmin}
         />
       </div>
 

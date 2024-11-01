@@ -1,3 +1,5 @@
+import {type FormEvent} from 'react'
+
 import Button from '@/components/Button'
 import Profile from '@/components/Profile'
 import Typography from '@/components/Typography'
@@ -15,7 +17,7 @@ const LoginForm = ({className}: Props) => {
   const supabase = createBrowserClient()
   const isLogin = user !== null
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
 
     if (isLogin) {

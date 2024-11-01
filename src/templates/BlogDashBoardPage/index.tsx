@@ -41,7 +41,7 @@ const BlogDashBoardPage = () => {
 
   const fetchBlogsData = async () => {
     try {
-      const res = await axios.get(`/api/BlogDashBoard`)
+      const res = await axios.get(`/api/blogDashBoard`)
       setBlogsData(res.data.blogsData)
     } catch (error) {
       // eslint-disable-next-line no-console

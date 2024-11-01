@@ -1,3 +1,4 @@
+import {type ChangeEvent} from 'react'
 import {twMerge} from 'tailwind-merge'
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
   name?: string
   className?: string
   placeholder?: string
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
 const Input = ({

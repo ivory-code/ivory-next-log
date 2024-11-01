@@ -1,6 +1,13 @@
 'use client'
 
-import {useCallback, useEffect, useState} from 'react'
+import {
+  type ChangeEvent,
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import {remark} from 'remark'
 import html from 'remark-html'
 
@@ -23,8 +30,8 @@ const MarkdownEditor = () => {
     'w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500'
 
   const handleInputChange =
-    (setter: React.Dispatch<React.SetStateAction<string>>) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (setter: Dispatch<SetStateAction<string>>) =>
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setter(event.target.value)
     }
 

@@ -1,5 +1,6 @@
 'use client'
 
+import {type ReactNode} from 'react'
 import {twMerge} from 'tailwind-merge'
 
 import IconButton from '@/components/IconButton'
@@ -9,7 +10,7 @@ interface Props {
   classWrap?: string
   isVisible: boolean
   onClose: () => void
-  children: React.ReactNode
+  children: ReactNode
 }
 
 const Modal = ({className, classWrap, isVisible, children, onClose}: Props) => {

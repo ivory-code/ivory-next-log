@@ -18,7 +18,7 @@ const MainPage = () => {
   const fetchProfileData = useCallback(async () => {
     try {
       const {data} = await axios.get<{profileData: ProfileData[]}>(
-        '/api/EditProfile',
+        '/api/editProfile',
       )
       setProfileData(data.profileData[0] || null)
     } catch (error) {
@@ -34,7 +34,7 @@ const MainPage = () => {
   return (
     <div>
       <Layout isMainView>
-        <LoginForm className="flex justify-end items-center h-18 mb-6 selection:border-b border-n-3" />
+        <LoginForm className="flex justify-end items-center h-10 mb-6 selection:border-b border-n-3" />
         <Typography
           text={profileData?.mainTitle ?? ''}
           className="mb-4 h2 md:h3 font-black text-n-7"

@@ -1,10 +1,12 @@
+import {type ReactNode} from 'react'
+
 import Typography from '@/components/Typography'
 
 interface Props {
   isModalVisible: boolean
   title: string
   description?: string
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 const TooltipModal = ({

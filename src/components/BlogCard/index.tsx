@@ -55,21 +55,21 @@ const BlogCard = ({id, title, imageUrl, content}: Props) => {
         </div>
         <Typography
           className={twMerge(
-            'mt-4 h3 leading-[4rem] 2xl:mb-2 2xl:h4 font-black',
+            'mt-4 h3 leading-[4rem] 2xl:mb-2 2xl:h4 font-black overflow-hidden',
             isBlogPage && 'truncate',
           )}
           text={title}
         />
         <div
           className={twMerge(
-            'mt-4 body2 font-semibold text-n-6',
+            'mt-4 body2 font-semibold text-n-6 overflow-hidden',
             isBlogPage && 'truncate',
           )}
           dangerouslySetInnerHTML={{__html: sanitizedContent}}
         />
         <div className="flex flex-wrap">
           <Link
-            href={`/BlogDetail/${id}`}
+            href={`/blogDetail/${id}`}
             className="btn-dark btn-small"
             prefetch={false}>
             <Typography className="base2" text="View More" />

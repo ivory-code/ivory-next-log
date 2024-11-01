@@ -16,6 +16,8 @@ import {type BlogData} from '@/templates/BlogPage'
 
 import type {ChangeEvent} from 'react'
 
+const FILE_MAX_SIZE = 1048576
+
 const supabase = createBrowserClient()
 
 const BlogEdit = ({
@@ -38,6 +40,15 @@ const BlogEdit = ({
   const handleMainImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0]
+
+      // 파일 용량 체크
+      if (file.size > FILE_MAX_SIZE) {
+        alert(
+          '이미지 용량이 1MB를 초과합니다. 1MB 이하의 이미지를 업로드해 주세요.',
+        )
+        return
+      }
+
       setMainImageFile(file)
       setFormData(prev => ({...prev, imageUrl: URL.createObjectURL(file)}))
     }
@@ -86,7 +97,7 @@ const BlogEdit = ({
       refreshBlogs?.()
     } else {
       await createBlog({id: user?.id ?? '', ...blogPayload})
-      router.push('/Blog')
+      router.push('/blog')
     }
   }
 

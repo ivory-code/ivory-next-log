@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 import {useParams} from 'next/navigation'
-import {useCallback, useEffect, useState} from 'react'
+import {type FormEvent, useCallback, useEffect, useState} from 'react'
 import {remark} from 'remark'
 import html from 'remark-html'
 import {twMerge} from 'tailwind-merge'
@@ -37,7 +37,7 @@ const BlogDetailPage = () => {
   const fetchBlogDetailData = useCallback(async () => {
     if (blogId) {
       try {
-        const {data} = await axios.get(`/api/BlogDetail?id=${blogId}`)
+        const {data} = await axios.get(`/api/blogDetail?id=${blogId}`)
         setBlogDetailData(data.post)
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -59,7 +59,7 @@ const BlogDetailPage = () => {
   }, [blogId])
 
   const handleSubmit = useCallback(
-    async (event: React.FormEvent) => {
+    async (event: FormEvent) => {
       event.preventDefault()
 
       if (!user?.id || !blogDetailData?.title) return

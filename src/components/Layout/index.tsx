@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {useParams, usePathname} from 'next/navigation'
-import {useCallback, useEffect, useState} from 'react'
+import {type ReactNode, useCallback, useEffect, useState} from 'react'
 
 import {createComment} from '@/app/api/createComment'
 import {deleteComment} from '@/app/api/deleteComment'
@@ -11,11 +11,12 @@ import {
 import LeftNavigationSideBar from '@/components/LeftNavigationSideBar'
 import RightCommentBar from '@/components/RightCommentBar'
 import {type CommentData} from '@/components/RightCommentBar/CommentBox'
+import TopNavigationBar from '@/components/TopNavigationBar'
 import {useUser} from '@/store/user'
 import {throttle} from '@/utils/throttle'
 
 interface Props {
-  children: React.ReactNode
+  children: ReactNode
   isMainView?: boolean
 }
 
@@ -24,7 +25,8 @@ const Layout = ({children, isMainView = false}: Props) => {
   const pathname = usePathname()
   const user = useUser(state => state.user)
 
-  const [isSideBarVisible, setIsSideBarVisible] = useState(false)
+  const [isLeftSideMiniBarVisible, setIsLeftSideMiniBarVisible] =
+    useState(false)
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(true)
   const [commentsData, setCommentsData] = useState<CommentData[]>([])
   const [blogCommentData, setBlogCommentData] = useState<CommentData[]>([])
@@ -32,17 +34,17 @@ const Layout = ({children, isMainView = false}: Props) => {
   const isBlogDetailPage = pathname.includes('Blog') && params.id !== undefined
 
   const handleResize = throttle(() => {
-    setIsSideBarVisible(window.innerWidth <= SIDE_BAR_BREAKPOINT)
+    setIsLeftSideMiniBarVisible(window.innerWidth <= SIDE_BAR_BREAKPOINT)
     setIsRightSideBarVisible(window.innerWidth > COMMENT_BAR_BREAKPOINT)
   }, 200)
 
   const fetchBlogCommentData = useCallback(async () => {
-    const res = await axios(`/api/BlogDetail?id=${params.id}`)
+    const res = await axios(`/api/blogDetail?id=${params.id}`)
     setBlogCommentData(res.data.comments)
   }, [params.id])
 
   const fetchCommentsData = useCallback(async () => {
-    const res = await axios(`/api/Blog`)
+    const res = await axios(`/api/blog`)
     setCommentsData(res.data.comments)
   }, [])
 
@@ -121,12 +123,13 @@ const Layout = ({children, isMainView = false}: Props) => {
     <div>
       <div
         className={`pr-6 bg-n-7 md:p-0 md:bg-n-1 md:overflow-hidden ${
-          isSideBarVisible ? 'pl-24 md:pl-0' : 'pl-80 xl:pl-24 md:pl-0'
+          isLeftSideMiniBarVisible ? 'pl-24 md:pl-0' : 'pl-80 xl:pl-24 md:pl-0'
         }`}>
         <LeftNavigationSideBar
           user={user}
-          isLeftSideBarVisible={isSideBarVisible}
+          isLeftSideBarVisible={isLeftSideMiniBarVisible}
         />
+        <TopNavigationBar user={user} />
         <div className="flex py-6 md:py-0 h-screen">
           <div
             className={`relative flex grow max-w-full bg-n-1 rounded-[1.25rem] ${
@@ -145,7 +148,7 @@ const Layout = ({children, isMainView = false}: Props) => {
                   data={isBlogDetailPage ? blogCommentData : commentsData}
                   user={user}
                   className={`${
-                    !isSideBarVisible &&
+                    !isLeftSideMiniBarVisible &&
                     'md:translate-x-64 md:before:absolute md:before:z-30 md:before:inset-0'
                   }`}
                   createComment={handleCreateComment}

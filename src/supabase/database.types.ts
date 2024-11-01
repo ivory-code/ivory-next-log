@@ -42,7 +42,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'Comments_post_id_fkey'
+            foreignKeyName: 'comments_post_id_fkey'
             columns: ['post_id']
             isOneToOne: false
             referencedRelation: 'posts'
@@ -55,13 +55,6 @@ export type Database = {
             referencedRelation: 'users'
             referencedColumns: ['id']
           },
-          {
-            foreignKeyName: 'comments_user_role_fkey'
-            columns: ['user_role']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['role']
-          },
         ]
       }
       favorites: {
@@ -69,21 +62,21 @@ export type Database = {
           created_at: string
           id: string
           post_id: string | null
-          post_title: string
+          post_title: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           post_id?: string | null
-          post_title: string
+          post_title?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           post_id?: string | null
-          post_title?: string
+          post_title?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -93,13 +86,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'posts'
             referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'favorites_post_title_fkey'
-            columns: ['post_title']
-            isOneToOne: false
-            referencedRelation: 'posts'
-            referencedColumns: ['title']
           },
           {
             foreignKeyName: 'Favorites_user_id_fkey'
@@ -182,15 +168,7 @@ export type Database = {
           subTitle?: string
           tools?: Json[] | null
         }
-        Relationships: [
-          {
-            foreignKeyName: 'profile_role_fkey'
-            columns: ['role']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['role']
-          },
-        ]
+        Relationships: []
       }
       users: {
         Row: {

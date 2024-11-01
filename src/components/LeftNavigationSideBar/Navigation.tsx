@@ -5,31 +5,27 @@ import {usePathname} from 'next/navigation'
 import {twMerge} from 'tailwind-merge'
 
 import Icon, {type IconName} from '@/components/Icon'
-import {useUser} from '@/store/user'
 
 export type NavigationType = {
   title: string
   url: string
   icon: IconName
   iconClass: string
+  isAdmin: boolean
   onClick?: () => void
 }
 
 interface Props {
   items: NavigationType[]
   isSideBarVisible?: boolean
+  isAdmin: boolean
 }
 
-const Navigation = ({items, isSideBarVisible = false}: Props) => {
+const Navigation = ({items, isSideBarVisible = false, isAdmin}: Props) => {
   const pathname = usePathname()
-  const user = useUser(state => state.user)
 
   // admin만 볼 수 있는 메뉴 필터링
-  const filteredItems = items.filter(
-    item =>
-      !(item.title === '글 작성하기' || item.title === '글 관리하기') ||
-      user?.role === 'admin',
-  )
+  const filteredItems = isAdmin ? items : items.filter(item => !item.isAdmin)
 
   return (
     <div className={twMerge(isSideBarVisible && 'px-2')}>

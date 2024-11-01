@@ -1,3 +1,4 @@
+import {type ChangeEvent} from 'react'
 import {twMerge} from 'tailwind-merge'
 
 import Input from '@/components/Input'
@@ -9,9 +10,7 @@ interface Props {
   defaultValue?: string
   className?: string
   placeholder?: string
-  onChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
+  onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
 const InputField = ({

@@ -1,9 +1,11 @@
+import {type ChangeEvent} from 'react'
+
 import Image from '@/components/Image'
 import Typography from '@/components/Typography'
 
 interface Props {
   label: string
-  onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onImageChange: (event: ChangeEvent<HTMLInputElement>) => void
   imageUrl?: string
 }
 

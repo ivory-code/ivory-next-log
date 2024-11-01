@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react'
+import {type FormEvent, useCallback, useState} from 'react'
 
 import Icon from '@/components/Icon'
 import Input from '@/components/Input'
@@ -11,7 +11,7 @@ const CommentInput = ({onClick}: Props) => {
   const [commentValue, setCommentValue] = useState('')
 
   const handleSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault()
 
       await onClick(commentValue)
