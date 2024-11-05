@@ -31,7 +31,7 @@ const Layout = ({children, isMainView = false}: Props) => {
   const [commentsData, setCommentsData] = useState<CommentData[]>([])
   const [blogCommentData, setBlogCommentData] = useState<CommentData[]>([])
 
-  const isBlogDetailPage = pathname.includes('Blog') && params.id !== undefined
+  const isBlogDetailPage = pathname.includes('blog') && params.id !== undefined
 
   const handleResize = throttle(() => {
     setIsLeftSideMiniBarVisible(window.innerWidth <= SIDE_BAR_BREAKPOINT)

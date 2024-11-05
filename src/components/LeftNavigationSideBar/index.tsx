@@ -1,3 +1,4 @@
+import {memo} from 'react'
 import {twMerge} from 'tailwind-merge'
 
 import BlogTitle from '@/components/BlogTitle'
@@ -52,4 +53,4 @@ const LeftNavigationSideBar = ({user, isLeftSideBarVisible = false}: Props) => {
   )
 }
 
-export default LeftNavigationSideBar
+export default memo(LeftNavigationSideBar)

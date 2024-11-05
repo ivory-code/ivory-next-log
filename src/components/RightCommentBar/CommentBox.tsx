@@ -4,10 +4,8 @@ import Link from 'next/link'
 import {useCallback, useState, useMemo} from 'react'
 import {twMerge} from 'tailwind-merge'
 
-import Button from '@/components/Button'
+import Dialog from '@/components/Dialog'
 import IconButton from '@/components/IconButton'
-import TooltipModal from '@/components/TooltipModal'
-import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
 import {type Database} from '@/supabase/database.types'
 
@@ -86,16 +84,12 @@ const CommentBox = ({
               iconClassName="cursor-pointer fill-accent-1"
               buttonClassName="bg-transparent hover:bg-accent-1/25"
             />
-            <TooltipModal
-              isModalVisible={isTooltipVisible}
-              title="댓글을 삭제하시겠습니까?">
-              <Button onClick={handlePositiveButton}>
-                <Typography text="예" />
-              </Button>
-              <Button onClick={handleNegativeButton}>
-                <Typography text="아니오" />
-              </Button>
-            </TooltipModal>
+            <Dialog
+              isVisible={isTooltipVisible}
+              message="댓글을 삭제하시겠습니까?"
+              onConfirm={handlePositiveButton}
+              onCancel={handleNegativeButton}
+            />
           </div>
         )}
       </div>

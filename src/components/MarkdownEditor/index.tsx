@@ -41,12 +41,8 @@ const MarkdownEditor = () => {
   }, [])
 
   const handleCreate = useCallback(async () => {
-    if (!title) {
-      return alert('제목을 입력해주세요.')
-    }
-
-    if (!content) {
-      return alert('내용을 입력해주세요.')
+    if (!title || !content) {
+      return
     }
 
     await createBlog({id: user?.id ?? '', title, content, imageUrl})

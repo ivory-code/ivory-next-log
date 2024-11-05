@@ -29,7 +29,7 @@ export async function editBlog({
     if (error) {
       // eslint-disable-next-line no-console
       console.error('Error updating blog:', error)
-      return alert('수정 권한이 없거나 오류가 발생했습니다.')
+      return null
     }
 
     return data

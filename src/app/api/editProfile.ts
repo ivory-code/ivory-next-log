@@ -33,9 +33,8 @@ export async function editProfile({
       .select('*')
 
     if (error) {
-      return alert('권한이 없습니다.')
+      return null
     }
-    alert('수정되었습니다.')
     return data[0]
   } catch (error) {
     // eslint-disable-next-line no-console

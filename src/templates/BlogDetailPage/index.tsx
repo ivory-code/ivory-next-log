@@ -1,3 +1,4 @@
+// BlogDetailPage.tsx
 'use client'
 
 import axios from 'axios'
@@ -17,6 +18,7 @@ import Layout from '@/components/Layout'
 import MarkdownView from '@/components/MarkdownView'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
+import BlogDetailPageSkeleton from '@/templates/BlogDetailPage/BlogDetailPageSkeleton'
 import {type BlogData} from '@/templates/BlogPage'
 
 const BlogDetailPage = () => {
@@ -26,6 +28,7 @@ const BlogDetailPage = () => {
   const [blogDetailData, setBlogDetailData] = useState<BlogData | null>(null)
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [htmlContent, setHtmlContent] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   const blogId = `${params.id}`
 
@@ -37,11 +40,15 @@ const BlogDetailPage = () => {
   const fetchBlogDetailData = useCallback(async () => {
     if (blogId) {
       try {
-        const {data} = await axios.get(`/api/blogDetail?id=${blogId}`)
+        const {data} = await axios.get<{post: BlogData}>(
+          `/api/blogDetail?id=${blogId}`,
+        )
         setBlogDetailData(data.post)
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Failed to fetch blog detail:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
   }, [blogId])
@@ -51,8 +58,7 @@ const BlogDetailPage = () => {
       return
     }
 
-    const data = await getBlogFavorite({blogId: `${blogId}`})
-
+    const data = await getBlogFavorite({blogId})
     if (data?.length) {
       setIsBookmarked(true)
     }
@@ -67,7 +73,6 @@ const BlogDetailPage = () => {
       if (isBookmarked) {
         await deleteFavorite({userId: user.id, blogId})
         setIsBookmarked(false)
-
         return
       }
       await addFavorite({
@@ -95,9 +100,11 @@ const BlogDetailPage = () => {
 
   return (
     <Layout>
-      {blogDetailData ? (
+      {isLoading ? (
+        <BlogDetailPageSkeleton />
+      ) : (
         <div>
-          {blogDetailData.titleImageUrl && (
+          {blogDetailData?.titleImageUrl && (
             <div className="relative w-full aspect-[2.4]">
               <Image
                 className="rounded-xl object-cover"
@@ -111,7 +118,7 @@ const BlogDetailPage = () => {
           <div>
             <div className="flex justify-between items-center">
               <Typography
-                text={blogDetailData.title}
+                text={blogDetailData?.title ?? ''}
                 className="mt-4 h3 leading-[4rem] 2xl:mb-2 2xl:h4 font-black"
               />
               <Button
@@ -130,8 +137,6 @@ const BlogDetailPage = () => {
             />
           </div>
         </div>
-      ) : (
-        <Typography text="Loading..." />
       )}
     </Layout>
   )

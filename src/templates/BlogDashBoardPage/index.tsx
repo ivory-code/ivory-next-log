@@ -1,72 +1,57 @@
+// BlogDashBoardPage.tsx
 'use client'
 
 import axios from 'axios'
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 
 import {deleteBlog} from '@/app/api/deleteBlog'
-import BlogEdit from '@/components/BlogEdit'
+import BlogEditModal, {
+  type BlogEditModalRef,
+} from '@/components/BlogEdit/BlogEditModal'
 import BlogList from '@/components/BlogList'
 import Button from '@/components/Button'
-import EditProfile from '@/components/EditProfile'
+import Dialog from '@/components/Dialog'
+import EditProfileModal, {
+  type EditProfileModalRef,
+} from '@/components/EditProfile'
 import Icon from '@/components/Icon'
 import IconButton from '@/components/IconButton'
 import Layout from '@/components/Layout'
-import Modal from '@/components/Modal'
-import TooltipModal from '@/components/TooltipModal'
 import Typography from '@/components/Typography'
 import {useUser} from '@/store/user'
+import BlogDashBoardPageSkeleton from '@/templates/BlogDashBoardPage/BlogDashBoardPageSkeleton'
 import {type BlogData} from '@/templates/BlogPage'
 
-const BlogDashBoardPage = () => {
-  const user = useUser(state => state.user)
+interface Props {
+  blogsData: BlogData[]
+  isLoading: boolean
+  blogId: string | null
+  onChangeBlogId: (id: string | null) => void
+  onDeleteBlog: (blogId: string) => Promise<void>
+  refetchBlogs: () => void
+}
 
-  const [isEditProfileVisible, setIsEditProfileVisible] = useState(false)
-  const [isBlogDetailVisible, setIsBlogDetailVisible] = useState(false)
-  const [blogsData, setBlogsData] = useState<BlogData[]>([])
+const Page = ({
+  blogsData,
+  isLoading,
+  blogId,
+  onChangeBlogId,
+  onDeleteBlog,
+  refetchBlogs,
+}: Props) => {
+  const editProfileModalRef = useRef<EditProfileModalRef>(null)
+  const blogEditModalRef = useRef<BlogEditModalRef>(null)
+
   const [selectedBlog, setSelectedBlog] = useState<BlogData | null>(null)
-  const [tooltipVisibleId, setTooltipVisibleId] = useState<string | null>(null)
 
   const handleEditProfile = () => {
-    setIsEditProfileVisible(prev => !prev)
-  }
-
-  const closeBlogDetailModal = () => {
-    setIsBlogDetailVisible(false)
+    editProfileModalRef.current?.openModal()
   }
 
   const handleBlogDetail = (blog: BlogData) => {
     setSelectedBlog(blog)
-    setIsBlogDetailVisible(true)
+    blogEditModalRef.current?.openModal()
   }
-
-  const fetchBlogsData = async () => {
-    try {
-      const res = await axios.get(`/api/blogDashBoard`)
-      setBlogsData(res.data.blogsData)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to fetch blogs data:', error)
-    }
-  }
-
-  const handleDeleteBlog = useCallback(
-    async (blogId: string) => {
-      if (!user) return
-
-      await deleteBlog({
-        userId: user.id,
-        blogId,
-        role: user.role,
-      })
-      setBlogsData(prevData => prevData.filter(blog => blog.id !== blogId))
-      setTooltipVisibleId(null)
-    },
-    [user],
-  )
-
-  useEffect(() => {
-    fetchBlogsData()
-  }, [])
 
   return (
     <div>
@@ -83,7 +68,11 @@ const BlogDashBoardPage = () => {
             <Typography text="홈 추가/수정" className="base2" />
           </div>
         </Button>
-        {blogsData.length > 0 &&
+        {isLoading ? (
+          Array.from({length: 5}).map((_, index) => (
+            <BlogDashBoardPageSkeleton key={index} />
+          ))
+        ) : blogsData.length > 0 ? (
           blogsData.map(data => (
             <div key={data.id} className="flex justify-between items-center">
               <BlogList
@@ -94,36 +83,89 @@ const BlogDashBoardPage = () => {
               <IconButton
                 buttonClassName="ml-4 fill-accent-1 transition-colors items-center bg-transparent"
                 iconName="delete"
-                onClick={() => setTooltipVisibleId(data.id)}
+                onClick={() => onChangeBlogId(data.id)}
               />
-              <TooltipModal
-                isModalVisible={tooltipVisibleId === data.id}
-                title="게시글을 삭제하시겠습니까?">
-                <Button onClick={() => handleDeleteBlog(data.id)}>
-                  <Typography text="예" />
-                </Button>
-                <Button onClick={() => setTooltipVisibleId(null)}>
-                  <Typography text="아니오" />
-                </Button>
-              </TooltipModal>
+              <Dialog
+                isVisible={blogId === data.id}
+                message="삭제하시겠습니까?"
+                onConfirm={() => onDeleteBlog(data.id)}
+                onCancel={() => onChangeBlogId(null)}
+              />
             </div>
-          ))}
+          ))
+        ) : (
+          <Typography text="No blogs found." />
+        )}
       </Layout>
-      <Modal
-        classWrap="max-w-[48rem] md:min-h-screen-ios md:rounded-none"
-        isVisible={isEditProfileVisible}
-        onClose={handleEditProfile}>
-        <EditProfile />
-      </Modal>
-      {selectedBlog && (
-        <Modal
-          classWrap="max-w-[48rem] md:min-h-screen-ios md:rounded-none"
-          isVisible={isBlogDetailVisible}
-          onClose={closeBlogDetailModal}>
-          <BlogEdit blogData={selectedBlog} refreshBlogs={fetchBlogsData} />
-        </Modal>
-      )}
+      <EditProfileModal ref={editProfileModalRef} />
+      <BlogEditModal
+        ref={blogEditModalRef}
+        blogData={selectedBlog ?? undefined}
+        refetchBlogs={refetchBlogs}
+      />
     </div>
+  )
+}
+
+const BlogDashBoardPage = () => {
+  const user = useUser(state => state.user)
+
+  const [blogsData, setBlogsData] = useState<BlogData[]>([])
+  const [isLoading, setIsLoading] = useState(true) // 로딩 상태 추가
+  const [blogId, setBlogId] = useState<string | null>(null)
+
+  const handleChangeBlogId = (id: string | null) => {
+    if (blogId) {
+      setBlogId(null)
+      return
+    }
+    setBlogId(id)
+  }
+
+  const fetchBlogsData = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const res = await axios.get(`/api/blogDashBoard`)
+      setBlogsData(res.data.blogsData)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to fetch blogs data:', error)
+    } finally {
+      setIsLoading(false) // 로딩 해제
+    }
+  }, [])
+
+  const handleDeleteBlog = useCallback(
+    async (blogId: string) => {
+      if (!user) return
+
+      await deleteBlog({
+        userId: user.id,
+        blogId,
+        role: user.role,
+      })
+      setBlogsData(prevData => prevData.filter(blog => blog.id !== blogId))
+      setBlogId(null)
+    },
+    [user],
+  )
+
+  useEffect(() => {
+    fetchBlogsData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return (
+    <>
+      <Page
+        blogsData={blogsData}
+        isLoading={isLoading}
+        blogId={blogId}
+        onChangeBlogId={handleChangeBlogId}
+        onDeleteBlog={handleDeleteBlog}
+        refetchBlogs={fetchBlogsData}
+      />
+    </>
   )
 }
 

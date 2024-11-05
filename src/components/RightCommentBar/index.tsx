@@ -1,4 +1,4 @@
-import {useCallback} from 'react'
+import {useCallback, useState, useEffect} from 'react'
 import {twMerge} from 'tailwind-merge'
 
 import CommentInput from '@/components/CommentInput'
@@ -6,6 +6,7 @@ import LoginForm from '@/components/LoginForm'
 import CommentBox, {
   type CommentData,
 } from '@/components/RightCommentBar/CommentBox'
+import RightCommentBarSkeleton from '@/components/RightCommentBar/RightCommentBarSkeleton'
 import {type User} from '@/store/user'
 
 interface Props {
@@ -41,6 +42,8 @@ const RightCommentBar = ({
   deleteComment,
   isBlogDetailPage = true,
 }: Props) => {
+  const [isLoading, setIsLoading] = useState(true)
+
   const handleInput = useCallback(
     async (content: string) => {
       if (createComment && user) {
@@ -67,6 +70,11 @@ const RightCommentBar = ({
     [deleteComment, user],
   )
 
+  useEffect(() => {
+    // 데이터를 불러오면 로딩 상태 해제
+    if (data.length > 0) setIsLoading(false)
+  }, [data])
+
   return (
     <div
       className={twMerge(
@@ -82,17 +90,21 @@ const RightCommentBar = ({
         </div>
       </div>
       <div className="grow overflow-y-auto scroll-smooth items-center px-6 md:px-3">
-        {data.map(comment => (
-          <CommentBox
-            key={comment.id}
-            item={comment}
-            isDisabled={isBlogDetailPage}
-            onClickPositiveButton={() => handleDelete(comment.id)}
-          />
-        ))}
+        {isLoading ? (
+          <RightCommentBarSkeleton />
+        ) : (
+          data.map(comment => (
+            <CommentBox
+              key={comment.id}
+              item={comment}
+              isDisabled={isBlogDetailPage}
+              onClickPositiveButton={() => handleDelete(comment.id)}
+            />
+          ))
+        )}
       </div>
       {isBlogDetailPage && (
-        <div className="absolute left-0 right-0 bottom-0 p-6">
+        <div className="absolute left-0 right-0 bottom-0 py-6 px-3">
           <CommentInput onClick={handleInput} />
         </div>
       )}

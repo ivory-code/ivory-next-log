@@ -20,7 +20,7 @@ export async function addFavorite({
     })
 
     if (error) {
-      return alert('권한이 없습니다.')
+      return null
     }
   } catch (error) {
     // eslint-disable-next-line no-console

@@ -24,7 +24,6 @@ export async function deleteComment({
     const {data, error} = await query
 
     if (error) {
-      alert('삭제 권한이 없습니다.')
       return null
     }
 

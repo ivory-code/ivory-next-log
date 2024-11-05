@@ -24,7 +24,7 @@ export async function createBlog({
     })
 
     if (error) {
-      return alert('권한이 없습니다.')
+      return null
     }
     return data
   } catch (error) {

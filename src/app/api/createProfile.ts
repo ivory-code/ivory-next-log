@@ -31,9 +31,9 @@ export async function createProfile({
       .insert({role, contents, mainTitle, subTitle, skills, tools, imageUrl})
 
     if (error) {
-      return alert('권한이 없습니다.')
+      return null
     }
-    alert('추가되었습니다.')
+
     return data
   } catch (error) {
     // eslint-disable-next-line no-console

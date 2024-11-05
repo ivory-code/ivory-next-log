@@ -32,7 +32,7 @@ export async function createComment({
       .select('*')
 
     if (error) {
-      return alert('권한이 없습니다.')
+      return null
     }
     return data[0]
   } catch (error) {

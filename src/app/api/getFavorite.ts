@@ -10,8 +10,6 @@ export async function getBlogsFavorites({userId}: {userId: string}) {
       .eq('user_id', userId)
 
     if (error) {
-      alert('error')
-
       return []
     }
 
@@ -32,8 +30,6 @@ export async function getBlogFavorite({blogId}: {blogId: string}) {
       .eq('post_id', blogId)
 
     if (error) {
-      alert('error')
-
       return []
     }
 
