@@ -3,15 +3,15 @@ import {createBrowserClient} from '@/supabase/client'
 export async function createComment({
   username,
   userId,
-  blogId,
+  postId,
   content,
-  role,
+  userRole,
 }: {
   username: string
   userId: string
-  blogId: string
+  postId: string
   content: string
-  role: string
+  userRole: string
 }) {
   const supabase = createBrowserClient()
 
@@ -22,11 +22,11 @@ export async function createComment({
         {
           username: username,
           user_id: userId,
-          post_id: blogId,
+          post_id: postId,
           content,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          user_role: role,
+          user_role: userRole,
         },
       ])
       .select('*')
