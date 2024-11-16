@@ -17,7 +17,7 @@ interface Props {
 
 const BlogCard = ({id, title, imageUrl, content}: Props) => {
   const pathname = usePathname()
-  const isBlogPage = pathname.includes('Blog')
+  const isBlogPage = pathname?.includes('Blog')
 
   const [sanitizedContent, setSanitizedContent] = useState('')
 

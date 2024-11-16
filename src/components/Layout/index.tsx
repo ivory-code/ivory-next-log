@@ -31,7 +31,8 @@ const Layout = ({children, isMainView = false}: Props) => {
   const [commentsData, setCommentsData] = useState<CommentData[]>([])
   const [blogCommentData, setBlogCommentData] = useState<CommentData[]>([])
 
-  const isBlogDetailPage = pathname.includes('blog') && params.id !== undefined
+  const isBlogDetailPage =
+    pathname?.includes('blog') && params?.id !== undefined
 
   const handleResize = throttle(() => {
     setIsLeftSideMiniBarVisible(window.innerWidth <= SIDE_BAR_BREAKPOINT)
@@ -39,9 +40,9 @@ const Layout = ({children, isMainView = false}: Props) => {
   }, 200)
 
   const fetchBlogCommentData = useCallback(async () => {
-    const res = await axios(`/api/blogDetail?id=${params.id}`)
+    const res = await axios(`/api/blogDetail?id=${params?.id}`)
     setBlogCommentData(res.data.comments)
-  }, [params.id])
+  }, [params?.id])
 
   const fetchCommentsData = useCallback(async () => {
     const res = await axios(`/api/blog`)
@@ -61,9 +62,9 @@ const Layout = ({children, isMainView = false}: Props) => {
       const newComment = await createComment({
         username,
         userId,
-        blogId: `${params.id}`,
+        postId: `${params?.id}`,
         content,
-        role: user?.role ?? '',
+        userRole: user?.role ?? '',
       })
 
       if (!newComment) {
@@ -76,7 +77,7 @@ const Layout = ({children, isMainView = false}: Props) => {
       }
       setCommentsData(prevData => [newComment, ...prevData])
     },
-    [isBlogDetailPage, params.id, user?.role],
+    [isBlogDetailPage, params?.id, user?.role],
   )
 
   const handleDeleteComment = useCallback(
