@@ -25,8 +25,10 @@ const Layout = ({children, isMainView = false}: Props) => {
   const [isLeftSideMiniBarVisible, setIsLeftSideMiniBarVisible] =
     useState(false)
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(true)
-  const [commentsData, setCommentsData] = useState<CommentData[]>([])
-  const [blogCommentData, setBlogCommentData] = useState<CommentData[]>([])
+  const [commentsData, setCommentsData] = useState<CommentData[] | null>(null)
+  const [blogCommentData, setBlogCommentData] = useState<CommentData[] | null>(
+    null,
+  )
 
   const hasValidPathname = pathname !== null && pathname.includes('blog')
   const hasValidParams = params !== null && params.id !== undefined
@@ -46,6 +48,7 @@ const Layout = ({children, isMainView = false}: Props) => {
 
       setBlogCommentData(res.data.comments)
     } catch (error) {
+      setBlogCommentData([])
       // eslint-disable-next-line no-console
       console.error('Error fetching blog comments:', error)
     }
@@ -55,8 +58,9 @@ const Layout = ({children, isMainView = false}: Props) => {
   const fetchCommentsData = useCallback(async () => {
     try {
       const res = await axios(`/api/blog`)
-      setCommentsData(res.data.comments)
+      setCommentsData(res.data.comments) // 로드 성공 시 데이터 설정
     } catch (error) {
+      setCommentsData([]) // 로드 실패 시 빈 배열 설정
       // eslint-disable-next-line no-console
       console.error('Error fetching comments:', error)
     }
@@ -84,9 +88,13 @@ const Layout = ({children, isMainView = false}: Props) => {
 
         if (newComment) {
           if (isBlogDetailPage) {
-            setBlogCommentData(prevData => [newComment, ...prevData])
+            setBlogCommentData(prevData =>
+              prevData ? [newComment, ...prevData] : [newComment],
+            )
           } else {
-            setCommentsData(prevData => [newComment, ...prevData])
+            setCommentsData(prevData =>
+              prevData ? [newComment, ...prevData] : [newComment],
+            )
           }
         }
       } catch (error) {
@@ -113,11 +121,15 @@ const Layout = ({children, isMainView = false}: Props) => {
 
         if (isBlogDetailPage) {
           setBlogCommentData(prevData =>
-            prevData.filter(comment => comment.id !== commentId),
+            prevData
+              ? prevData.filter(comment => comment.id !== commentId)
+              : prevData,
           )
         } else {
           setCommentsData(prevData =>
-            prevData.filter(comment => comment.id !== commentId),
+            prevData
+              ? prevData.filter(comment => comment.id !== commentId)
+              : prevData,
           )
         }
       } catch (error) {

@@ -81,8 +81,6 @@ const BlogDetailPage = () => {
         setIsBookmarked(false)
         return
       }
-      // eslint-disable-next-line no-console
-      console.log('Deleted favorite')
       setIsBookmarked(false)
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -100,8 +98,6 @@ const BlogDetailPage = () => {
         blogTitle: blogDetailData.title,
       })
       setIsBookmarked(true)
-      // eslint-disable-next-line no-console
-      console.log('Added favorite')
       setIsBookmarked(true)
     } catch (error) {
       // eslint-disable-next-line no-console
