@@ -1,8 +1,8 @@
 'use client'
 
-import axios from 'axios'
 import React, {useCallback, useEffect, useState, useRef} from 'react'
 
+import {deleteBlog} from '@/app/api/deleteBlog'
 import BlogEditModal, {
   type BlogEditModalRef,
 } from '@/features/blog/components/BlogEditModal'
@@ -16,6 +16,7 @@ import Dialog from '@/shared/components/Dialog'
 import Icon from '@/shared/components/Icon'
 import IconButton from '@/shared/components/IconButton'
 import Typography from '@/shared/components/Typography'
+import {SUPABASE_ANON_KEY, SUPABASE_URL} from '@/shared/constants'
 import {type BlogData} from '@/shared/types'
 import {useUser} from '@/store/user'
 import Layout from '@/widgets/Layout/components'
@@ -121,8 +122,25 @@ const BlogDashBoardPage = () => {
   const fetchBlogsData = useCallback(async () => {
     setIsLoading(true)
     try {
-      const response = await axios.get('/api/blogDashBoard')
-      setBlogsData(response.data.blogsData) // 데이터를 설정
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        throw new Error(
+          'Supabase URL or ANON KEY is missing in environment variables.',
+        )
+      }
+
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
+        method: 'GET',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-cache',
+      })
+
+      const data = await response.json()
+
+      setBlogsData(data) // 데이터를 설정
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Failed to fetch blogs data:', error)
@@ -136,9 +154,7 @@ const BlogDashBoardPage = () => {
       if (!user) return
 
       try {
-        await axios.delete(`/api/blogDashBoard`, {
-          data: {id: blogId},
-        })
+        await deleteBlog({userId: user.id, blogId, role: user.role})
         setBlogsData(prevData => prevData.filter(blog => blog.id !== blogId))
         setBlogId(null)
       } catch (error) {

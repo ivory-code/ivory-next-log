@@ -33,6 +33,7 @@
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "prettier.configPath": ".prettierrc.js",
   "cSpell.words": [
+    "apikey",
     "clsx",
     "Dragbar",
     "ellipsize",

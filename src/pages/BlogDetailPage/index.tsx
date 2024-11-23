@@ -9,6 +9,7 @@ import {twMerge} from 'tailwind-merge'
 
 import {addFavorite} from '@/app/api/addFavorite'
 import {deleteFavorite} from '@/app/api/deleteFavorite'
+import {getBlogFavorite} from '@/app/api/getFavorite'
 import MarkdownView from '@/features/blog/components/MarkdownView'
 import BlogDetailPageSkeleton from '@/pages/BlogDetailPage/ui/BlogDetailPageSkeleton'
 import Button from '@/shared/components/Button'
@@ -56,9 +57,9 @@ const BlogDetailPage = () => {
 
     setIsLoading(true)
     try {
-      const {data} = await axios.get(`/api/favorite`)
-      if (data.favoritesData) {
-        const favorite = data.favoritesData.find(
+      const data = await getBlogFavorite({blogId})
+      if (data) {
+        const favorite = data.find(
           (fav: FavoriteData) =>
             fav.post_id === blogId && fav.user_id === user.id,
         )
