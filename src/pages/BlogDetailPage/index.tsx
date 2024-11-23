@@ -1,6 +1,5 @@
 'use client'
 
-import axios from 'axios' // axios를 import
 import {useParams} from 'next/navigation'
 import {useState, useEffect, useCallback, type FormEvent} from 'react'
 import {remark} from 'remark'
@@ -40,10 +39,12 @@ const BlogDetailPage = () => {
     if (!blogId) return
     setIsLoading(true)
     try {
-      const {data} = await axios.get<{post: BlogData}>(
-        `/api/blogDetail?id=${blogId}`,
-      )
-      setBlogDetailData(data.post)
+      const response = await fetch(`/api/blogDetail?id=${blogId}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch blog detail')
+      }
+      const result = await response.json()
+      setBlogDetailData(result.post)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Failed to fetch blog detail:', error)
@@ -80,9 +81,7 @@ const BlogDetailPage = () => {
       if (isBookmarked) {
         await deleteFavorite({userId: user.id, blogId})
         setIsBookmarked(false)
-        return
       }
-      setIsBookmarked(false)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error removing favorite:', error)
@@ -98,7 +97,6 @@ const BlogDetailPage = () => {
         blogId,
         blogTitle: blogDetailData.title,
       })
-      setIsBookmarked(true)
       setIsBookmarked(true)
     } catch (error) {
       // eslint-disable-next-line no-console

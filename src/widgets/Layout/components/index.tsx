@@ -1,4 +1,3 @@
-import axios from 'axios'
 import {useParams, usePathname} from 'next/navigation'
 import {type ReactNode, useCallback, useEffect, useState} from 'react'
 
@@ -44,9 +43,12 @@ const Layout = ({children, isMainView = false}: Props) => {
   // 댓글 데이터 불러오기 (블로그 상세 페이지)
   const fetchBlogCommentData = useCallback(async () => {
     try {
-      const res = await axios(`/api/blogDetail?id=${params?.id}`)
-
-      setBlogCommentData(res.data.comments)
+      const response = await fetch(`/api/blogDetail?id=${params?.id}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch blog comments')
+      }
+      const result = await response.json()
+      setBlogCommentData(result.comments)
     } catch (error) {
       setBlogCommentData([])
       // eslint-disable-next-line no-console
@@ -57,10 +59,14 @@ const Layout = ({children, isMainView = false}: Props) => {
   // 댓글 데이터 불러오기 (블로그 목록)
   const fetchCommentsData = useCallback(async () => {
     try {
-      const res = await axios(`/api/blog`)
-      setCommentsData(res.data.comments) // 로드 성공 시 데이터 설정
+      const response = await fetch(`/api/blog`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments')
+      }
+      const result = await response.json()
+      setCommentsData(result.comments)
     } catch (error) {
-      setCommentsData([]) // 로드 실패 시 빈 배열 설정
+      setCommentsData([])
       // eslint-disable-next-line no-console
       console.error('Error fetching comments:', error)
     }

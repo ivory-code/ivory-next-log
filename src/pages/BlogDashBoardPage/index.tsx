@@ -16,7 +16,6 @@ import Dialog from '@/shared/components/Dialog'
 import Icon from '@/shared/components/Icon'
 import IconButton from '@/shared/components/IconButton'
 import Typography from '@/shared/components/Typography'
-import {SUPABASE_ANON_KEY, SUPABASE_URL} from '@/shared/constants'
 import {type BlogData} from '@/shared/types'
 import {useUser} from '@/store/user'
 import Layout from '@/widgets/Layout/components'
@@ -122,25 +121,12 @@ const BlogDashBoardPage = () => {
   const fetchBlogsData = useCallback(async () => {
     setIsLoading(true)
     try {
-      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        throw new Error(
-          'Supabase URL or ANON KEY is missing in environment variables.',
-        )
+      const response = await fetch('/api/blogDashBoard', {method: 'GET'})
+      if (!response.ok) {
+        throw new Error('Failed to fetch blogs data')
       }
-
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/posts`, {
-        method: 'GET',
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-cache',
-      })
-
-      const data = await response.json()
-
-      setBlogsData(data) // 데이터를 설정
+      const result = await response.json()
+      setBlogsData(result.blogsData) // 데이터를 설정
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Failed to fetch blogs data:', error)
