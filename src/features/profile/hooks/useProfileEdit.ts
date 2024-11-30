@@ -8,7 +8,6 @@ import {
   type ProfileState,
 } from '@/features/profile/reducer/profileReducer'
 import {SKILLS, TOOLS} from '@/shared/constants'
-import {type ProfileData} from '@/shared/types'
 import {useUser} from '@/store/user'
 import {createBrowserClient} from '@/supabase/client'
 
@@ -117,25 +116,25 @@ export const useProfileEdit = () => {
     } catch (error) {
       showDialog('프로필 저장에 실패했습니다.', true)
     }
-  }, [state.profileForm, state.imageFile, uploadImage, user?.role, showDialog])
+  }, [state.imageFile, state.profileForm, uploadImage, user?.role, showDialog])
 
-  const fetchProfileData = useCallback(async () => {
+  const fetchProfile = useCallback(async () => {
     try {
-      const response = await fetch('/api/main', {cache: 'no-store'})
-      if (!response.ok) {
-        throw new Error(`Failed to fetch profile data: ${response.statusText}`)
-      }
+      const response = await fetch(`/api/main`, {
+        method: 'GET',
+      })
 
-      const {profileData}: {profileData: ProfileData[]} = await response.json()
+      const data = await response.json()
+      const profileData = data.profileData[0]
 
-      if (profileData[0]) {
+      if (profileData) {
         dispatch({
           type: 'SET_PROFILE',
           profile: {
-            mainTitle: profileData[0].mainTitle,
-            subTitle: profileData[0].subTitle,
-            content: profileData[0].contents,
-            imageUrl: profileData[0].imageUrl ?? '',
+            mainTitle: profileData.mainTitle,
+            subTitle: profileData.subTitle,
+            content: profileData.contents,
+            imageUrl: profileData.imageUrl ?? '',
           },
         })
       }
@@ -146,10 +145,11 @@ export const useProfileEdit = () => {
   }, [])
 
   useEffect(() => {
-    fetchProfileData()
-  }, [fetchProfileData])
+    fetchProfile()
+  }, [fetchProfile])
 
   return {
+    fetchProfile,
     profileForm: state.profileForm,
     dialogConfig: state.dialogConfig,
     handleImageChange,

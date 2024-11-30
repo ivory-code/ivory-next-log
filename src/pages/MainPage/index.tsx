@@ -1,28 +1,30 @@
 'use client'
 
 import Image from 'next/image'
-import React from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 
 import LoginForm from '@/features/auth/components/LoginForm'
+import MainPageSkeleton from '@/pages/MainPage/ui/MainPageSkeleton'
 import IconRow, {type IconsType} from '@/shared/components/IconRow'
 import Typography from '@/shared/components/Typography'
 import {type ProfileData} from '@/shared/types'
 import Layout from '@/widgets/Layout/components'
 
 interface Props {
-  profileData: ProfileData
+  profileData?: ProfileData
 }
 
 const Page = ({profileData}: Props) => {
-  const {
-    mainTitle = 'Default Title',
-    subTitle = 'Default Subtitle',
-    contents = 'Default Contents',
-    skills = [],
-    tools = [],
-    imageUrl = '',
-  } = profileData
+  if (!profileData) {
+    return (
+      <Layout isMainView>
+        <LoginForm className="flex justify-end items-center h-10 mb-6 selection:border-b" />
+        <MainPageSkeleton />
+      </Layout>
+    )
+  }
 
+  const {mainTitle, subTitle, contents, skills, tools, imageUrl} = profileData
   return (
     <Layout isMainView>
       <LoginForm className="flex justify-end items-center h-10 mb-6 selection:border-b" />
@@ -35,7 +37,7 @@ const Page = ({profileData}: Props) => {
             className="mt-4 base2 text-n-4 whitespace-pre-line"
           />
           <div className="lg:flex lg:justify-around md:flex-col md:justify-normal">
-            {skills && (
+            {skills !== undefined && (
               <IconRow
                 icons={skills as unknown as IconsType}
                 title="Skills"
@@ -67,14 +69,33 @@ const Page = ({profileData}: Props) => {
   )
 }
 
-const MainPage = ({profileData}: Props) => {
-  if (!profileData) {
-    return (
-      <div className="text-center text-red-500">
-        Error: Profile data is unavailable. Please try again later.
-      </div>
-    )
-  }
+const MainPage = () => {
+  const [profileData, setProfileData] = useState<ProfileData>()
+
+  const loadProfileData = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/main`, {
+        method: 'GET',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile data')
+      }
+
+      const result = await response.json()
+
+      if (result?.profileData[0]) {
+        setProfileData(result?.profileData[0])
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching profile data:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadProfileData()
+  }, [loadProfileData])
 
   return <Page profileData={profileData} />
 }

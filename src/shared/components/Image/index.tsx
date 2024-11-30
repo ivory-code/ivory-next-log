@@ -1,5 +1,3 @@
-'use client'
-
 import {default as NextImage, type ImageProps} from 'next/image'
 import {useState} from 'react'
 import {twMerge} from 'tailwind-merge'
