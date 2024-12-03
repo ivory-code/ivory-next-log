@@ -1,4 +1,4 @@
-import {forwardRef, useImperativeHandle, useState} from 'react'
+import {forwardRef, useCallback, useImperativeHandle, useState} from 'react'
 
 import BlogEdit from '@/features/blog/components/BlogEdit'
 import Modal from '@/shared/components/Modal'
@@ -11,27 +11,26 @@ interface BlogEditModalProps {
 
 export interface BlogEditModalRef {
   openModal: () => void
-  closeModal: () => void
 }
 
 const BlogEditModal = forwardRef<BlogEditModalRef, BlogEditModalProps>(
   ({blogData, refetchBlogs}, ref) => {
     const [isModalVisible, setIsModalVisible] = useState(false)
 
+    const handleCloseModal = useCallback(() => {
+      setIsModalVisible(false)
+      refetchBlogs()
+    }, [refetchBlogs])
+
     useImperativeHandle(ref, () => ({
       openModal() {
         setIsModalVisible(true)
       },
-      closeModal() {
-        setIsModalVisible(false)
-      },
     }))
 
     return (
-      <Modal
-        isVisible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}>
-        <BlogEdit blogData={blogData} refetchBlogs={refetchBlogs} />
+      <Modal isVisible={isModalVisible} onClose={handleCloseModal}>
+        <BlogEdit blogData={blogData} />
       </Modal>
     )
   },

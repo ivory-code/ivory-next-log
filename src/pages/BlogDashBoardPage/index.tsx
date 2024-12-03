@@ -44,14 +44,62 @@ const Page = ({
 
   const [selectedBlog, setSelectedBlog] = useState<BlogData | null>(null)
 
-  const handleEditProfile = () => {
+  const handleEditProfile = useCallback(() => {
     editProfileModalRef.current?.openModal()
-  }
+  }, [])
 
-  const handleBlogDetail = (blog: BlogData) => {
+  const handleBlogDetail = useCallback((blog: BlogData) => {
     setSelectedBlog(blog)
     blogEditModalRef.current?.openModal()
-  }
+  }, [])
+
+  // Skeleton 렌더링
+  const renderSkeletons = useCallback(() => {
+    return Array.from({length: 5}).map((_, index) => (
+      <BlogDashBoardPageSkeleton key={index} />
+    ))
+  }, [])
+
+  // 블로그 리스트 렌더링
+  const renderBlogList = useCallback(() => {
+    return blogsData.map(data => (
+      <div key={data.id} className="flex justify-between items-center">
+        <BlogList
+          onClick={() => handleBlogDetail(data)}
+          title={data.title}
+          isAdmin
+        />
+        <IconButton
+          buttonClassName="ml-4 fill-accent-1 transition-colors items-center bg-transparent"
+          iconName="delete"
+          onClick={() => onChangeBlogId(data.id)}
+        />
+        <Dialog
+          isVisible={blogId === data.id}
+          message="삭제하시겠습니까?"
+          onConfirm={() => onDeleteBlog(data.id)}
+          onCancel={() => onChangeBlogId(null)}
+        />
+      </div>
+    ))
+  }, [blogsData, blogId, handleBlogDetail, onChangeBlogId, onDeleteBlog])
+
+  const renderNoBlogsMessage = useCallback(() => {
+    return <Typography text="No blogs found." />
+  }, [])
+
+  // 조건부 렌더링
+  const renderContent = useCallback(() => {
+    if (isLoading) return renderSkeletons()
+    if (blogsData.length === 0 || !blogsData) return renderNoBlogsMessage()
+    return renderBlogList()
+  }, [
+    isLoading,
+    blogsData,
+    renderSkeletons,
+    renderBlogList,
+    renderNoBlogsMessage,
+  ])
 
   return (
     <div>
@@ -64,34 +112,7 @@ const Page = ({
             <Typography text="홈 추가/수정" className="base2" />
           </div>
         </Button>
-        {isLoading ? (
-          Array.from({length: 5}).map((_, index) => (
-            <BlogDashBoardPageSkeleton key={`${index}`} />
-          ))
-        ) : blogsData.length > 0 ? (
-          blogsData.map(data => (
-            <div key={data.id} className="flex justify-between items-center">
-              <BlogList
-                onClick={() => handleBlogDetail(data)}
-                title={data.title}
-                isAdmin
-              />
-              <IconButton
-                buttonClassName="ml-4 fill-accent-1 transition-colors items-center bg-transparent"
-                iconName="delete"
-                onClick={() => onChangeBlogId(data.id)}
-              />
-              <Dialog
-                isVisible={blogId === data.id}
-                message="삭제하시겠습니까?"
-                onConfirm={() => onDeleteBlog(data.id)}
-                onCancel={() => onChangeBlogId(null)}
-              />
-            </div>
-          ))
-        ) : (
-          <Typography text="No blogs found." />
-        )}
+        {renderContent()}
       </Layout>
       <EditProfileModal ref={editProfileModalRef} />
       <BlogEditModal
@@ -106,8 +127,8 @@ const Page = ({
 const BlogDashBoardPage = () => {
   const user = useUser(state => state.user)
 
-  const [blogsData, setBlogsData] = useState<BlogData[]>([]) // Use proper type for blogs data
-  const [isLoading, setIsLoading] = useState(true) // 로딩 상태 추가
+  const [blogsData, setBlogsData] = useState<BlogData[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [blogId, setBlogId] = useState<string | null>(null)
 
   const handleChangeBlogId = (id: string | null) => {
@@ -126,12 +147,12 @@ const BlogDashBoardPage = () => {
         throw new Error('Failed to fetch blogs data')
       }
       const result = await response.json()
-      setBlogsData(result.blogsData) // 데이터를 설정
+      setBlogsData(result.blogsData)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Failed to fetch blogs data:', error)
     } finally {
-      setIsLoading(false) // 로딩 해제
+      setIsLoading(false)
     }
   }, [])
 
