@@ -44,6 +44,9 @@ yarn dev
 - FSD 아키텍처를 적용하여 기능별로 코드를 모듈화하고, 유지보수성과 확장성을 높였습니다.
 - 공통 모듈(shared/)을 활용해 중복 코드를 줄이고, 코드의 재사용성을 극대화했습니다.
 
+- [app 디렉토리](src/app/README.md)
+- [features 디렉토리](src/features/README.md)
+
 ```
 src/
 ├── app/                # 애플리케이션 루트 설정 및 초기화
