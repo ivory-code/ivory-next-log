@@ -15,8 +15,8 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'khs-log',
-  description: 'khs-log',
+  title: 'ivory-next-log',
+  description: 'ivory-next-log',
 }
 
 export default function RootLayout({

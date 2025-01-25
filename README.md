@@ -16,7 +16,7 @@
 ### 1. Clone the repository
 
 ```
-git clone https://github.com/dev-khs/khs-log.git
+git clone https://github.com/ivory-code/ivory-next-log.git
 ```
 
 ### 2. Install dependencies
