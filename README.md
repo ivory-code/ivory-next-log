@@ -47,6 +47,7 @@ yarn dev
 - [app 디렉토리](src/app/README.md)
 - [features 디렉토리](src/features/README.md)
 - [pages 디렉토리](src/pages/README.md)
+- [shared 디렉토리](src/shared/README.md)
 
 ```
 src/
