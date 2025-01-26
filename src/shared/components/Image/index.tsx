@@ -14,6 +14,7 @@ const Image = ({className = '', sizes = '500px', ...props}: ImageProps) => {
       )}
       onLoad={() => setLoaded(true)}
       sizes={sizes}
+      objectFit="true"
       {...props}
     />
   )

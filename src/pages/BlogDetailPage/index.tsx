@@ -2,8 +2,6 @@
 
 import {useParams} from 'next/navigation'
 import {useState, useEffect, useCallback, type FormEvent} from 'react'
-import {remark} from 'remark'
-import html from 'remark-html'
 import {twMerge} from 'tailwind-merge'
 
 import {addFavorite} from '@/app/api/addFavorite'
@@ -25,15 +23,10 @@ const BlogDetailPage = () => {
 
   const [blogDetailData, setBlogDetailData] = useState<BlogData | null>(null)
   const [isBookmarked, setIsBookmarked] = useState(false)
-  const [htmlContent, setHtmlContent] = useState('')
+  const [blogContent, setBlogContent] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   const blogId = `${params?.id}`
-
-  const convertMarkdownToHtml = useCallback(async (markdownBody: string) => {
-    const processedContent = await remark().use(html).process(markdownBody)
-    setHtmlContent(processedContent.toString())
-  }, [])
 
   const fetchBlogDetailData = useCallback(async () => {
     if (!blogId) return
@@ -134,9 +127,9 @@ const BlogDetailPage = () => {
 
   useEffect(() => {
     if (blogDetailData?.content) {
-      void convertMarkdownToHtml(blogDetailData.content)
+      setBlogContent(blogDetailData.content)
     }
-  }, [blogDetailData?.content, convertMarkdownToHtml])
+  }, [blogDetailData?.content])
 
   return (
     <Layout>
@@ -145,11 +138,12 @@ const BlogDetailPage = () => {
       ) : (
         <div>
           {blogDetailData?.titleImageUrl && (
-            <div className="relative w-full aspect-[2.4]">
+            <div className="relative w-full aspect-[2.4] flex justify-center">
               <Image
                 className="rounded-xl object-cover"
                 src={blogDetailData.titleImageUrl}
-                fill
+                width={700}
+                height={400}
                 alt="blogDetailImage"
                 priority
               />
@@ -172,7 +166,7 @@ const BlogDetailPage = () => {
               </Button>
             </div>
             <MarkdownView
-              content={htmlContent}
+              content={blogContent}
               className="mt-4 body2 font-semibold text-n-6"
             />
           </div>

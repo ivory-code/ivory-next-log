@@ -1,3 +1,4 @@
+import MDEditor from '@uiw/react-md-editor'
 import {twMerge} from 'tailwind-merge'
 
 interface Props {
@@ -7,12 +8,12 @@ interface Props {
 
 const MarkdownView = ({content, className}: Props) => {
   return (
-    <div
-      className={twMerge(className)}
-      dangerouslySetInnerHTML={{
-        __html: content.replace(/\n/g, '<br />'),
-      }}
-    />
+    <div className={twMerge(className)}>
+      <MDEditor.Markdown
+        source={content}
+        style={{background: 'transparent', padding: 10, color: 'GrayText'}}
+      />
+    </div>
   )
 }
 
