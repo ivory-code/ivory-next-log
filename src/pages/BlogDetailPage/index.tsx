@@ -17,7 +17,7 @@ import {type BlogData, type FavoriteData} from '@/shared/types'
 import {useUser} from '@/store/user'
 import Layout from '@/widgets/Layout/components'
 
-export const runtime = 'edge'
+export const runtime = 'experimental-edge'
 
 const BlogDetailPage = () => {
   const params = useParams()
