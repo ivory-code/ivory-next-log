@@ -49,8 +49,6 @@ const Layout = ({children, isMainView = false}: Props) => {
       setBlogCommentData(result.comments)
     } catch (error) {
       setBlogCommentData([])
-      // eslint-disable-next-line no-console
-      console.error('Error fetching blog comments:', error)
     }
   }, [params])
 
