@@ -74,7 +74,7 @@ const EditProfileModal = forwardRef<EditProfileModalRef>((_, ref) => {
 
         {/* 부제목 필드 */}
         <div className="mb-4">
-          <h2 className="text-xl font-bold mb-2">부제목</h2>
+          <h2 className="text-xl font-bold mb-2">부제목(깃허브)</h2>
           <Input
             value={profileForm.subTitle}
             onChange={e => handleFormChange('subTitle', e.target.value)}
